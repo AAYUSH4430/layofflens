@@ -1463,25 +1463,30 @@
       }
     }
 
-    // AI CHAT
+    // AI CHAT - with conversation memory
+    const chatHistory = [];
+
     async function sendMessage() {
       const input = document.getElementById('chatInput');
       const msg = input.value.trim();
       if (!msg) return;
       input.value = '';
       addMessage(msg, 'user');
+      chatHistory.push({ role: 'user', content: msg });
       showTyping();
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg })
+          body: JSON.stringify({ messages: chatHistory })
         });
         const data = await res.json();
         hideTyping();
         addMessage(data.response, 'ai');
+        chatHistory.push({ role: 'assistant', content: data.response });
       } catch (err) {
         hideTyping();
+        chatHistory.pop();
         addMessage('I\'m having trouble connecting right now. Please try again in a moment.', 'ai');
       }
     }
