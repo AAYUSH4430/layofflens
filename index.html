@@ -1140,7 +1140,7 @@
       <h3>Share Your Story</h3>
       <p>Anonymous. No email required. Your story could help someone who is going through the same thing right now.</p>
       <div class="share-form">
-        <select>
+        <select id="storyIndustry">
           <option value="" disabled selected>Your Industry</option>
           <option>Tech</option>
           <option>Finance</option>
@@ -1150,7 +1150,7 @@
           <option>Energy</option>
           <option>Other</option>
         </select>
-        <select>
+        <select id="storyCountry">
           <option value="" disabled selected>Your Country</option>
           <option>USA</option>
           <option>UK</option>
@@ -1161,7 +1161,7 @@
           <option>Germany</option>
           <option>Other</option>
         </select>
-        <textarea placeholder="Share your experience anonymously. What happened? What did you learn? What would you tell someone going through the same thing?" required></textarea>
+        <textarea id="storyText" placeholder="Share your experience anonymously. What happened? What did you learn? What would you tell someone going through the same thing?" required></textarea>
         <div class="full">
           <button class="btn-red" onclick="submitStory()" style="width:100%;padding:16px;font-size:14px;">Share Anonymously →</button>
         </div>
@@ -1513,8 +1513,81 @@
     }
 
     // STORIES
-    function submitStory() {
-      alert('Thank you for sharing your story. It will appear anonymously and help others going through the same thing. 🙏');
+    async function loadStories() {
+      try {
+        const res = await fetch('/api/stories');
+        const data = await res.json();
+        if (data.stories && data.stories.length > 0) {
+          const grid = document.getElementById('storiesGrid');
+          // keep first 3 default stories, prepend new ones
+          data.stories.slice(0, 6).forEach(story => {
+            const card = document.createElement('div');
+            card.className = 'story-card';
+            card.innerHTML = `
+              <div class="story-meta">
+                <span class="story-tag">${story.industry}</span>
+                <span class="story-date">${story.date}</span>
+              </div>
+              <p>"${story.text}"</p>
+              <div class="story-anon">— Anonymous · ${story.country}</div>
+            `;
+            grid.insertBefore(card, grid.firstChild);
+          });
+        }
+      } catch (err) {}
+    }
+    loadStories();
+
+    async function submitStory() {
+      const industry = document.getElementById('storyIndustry').value;
+      const country = document.getElementById('storyCountry').value;
+      const text = document.getElementById('storyText').value;
+
+      if (!text || text.trim().length < 20) {
+        alert('Please write a bit more — your story matters! 🙏');
+        return;
+      }
+
+      const btn = document.querySelector('.share-form .btn-red');
+      btn.textContent = 'Sharing...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/stories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ industry, country, text })
+        });
+        const data = await res.json();
+        if (data.success) {
+          btn.textContent = '✓ Shared! Thank you 🙏';
+          document.getElementById('storyText').value = '';
+          document.getElementById('storyIndustry').selectedIndex = 0;
+          document.getElementById('storyCountry').selectedIndex = 0;
+          // Add story to grid immediately
+          const grid = document.getElementById('storiesGrid');
+          const card = document.createElement('div');
+          card.className = 'story-card';
+          const date = new Date().toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+          card.innerHTML = `
+            <div class="story-meta">
+              <span class="story-tag">${industry || 'Other'}</span>
+              <span class="story-date">${date}</span>
+            </div>
+            <p>"${text}"</p>
+            <div class="story-anon">— Anonymous · ${country || 'Anonymous'}</div>
+          `;
+          grid.insertBefore(card, grid.firstChild);
+        } else {
+          btn.textContent = 'Share Anonymously →';
+          btn.disabled = false;
+          alert('Something went wrong. Please try again!');
+        }
+      } catch (err) {
+        btn.textContent = 'Share Anonymously →';
+        btn.disabled = false;
+        alert('Something went wrong. Please try again!');
+      }
     }
 
 
