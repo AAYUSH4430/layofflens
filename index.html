@@ -1462,19 +1462,15 @@
       addMessage(msg, 'user');
       showTyping();
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('https://layofflens.onrender.com/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
-            system: 'You are a compassionate and practical career advisor on LayoffLens, a platform for people affected by layoffs. You give warm, honest, actionable advice to people who have been laid off or are worried about losing their job. Focus on practical next steps, mental health, skill building (especially AI tools), job search strategies, and financial advice. Keep responses concise — 3-4 paragraphs max. Be human, not corporate.',
-            messages: [{ role: 'user', content: msg }]
+          body: JSON.stringify({ message: msg }
           })
         });
         const data = await res.json();
         hideTyping();
-        addMessage(data.content[0].text, 'ai');
+        addMessage(data.response, 'ai');
       } catch (err) {
         hideTyping();
         addMessage('I\'m having trouble connecting right now. Please try again in a moment.', 'ai');
