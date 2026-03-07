@@ -32,7 +32,7 @@
       background: var(--bg);
       color: var(--white);
       overflow-x: hidden;
-      cursor: auto;
+      cursor: none;
     }
 
     /* CUSTOM CURSOR */
@@ -184,7 +184,7 @@
       text-transform: uppercase;
       text-decoration: none;
       border: none;
-      cursor: auto;
+      cursor: pointer;
       transition: opacity 0.2s, transform 0.2s;
     }
     .btn-red:hover { opacity: 0.85; transform: translateY(-2px); }
@@ -199,7 +199,7 @@
       text-transform: uppercase;
       text-decoration: none;
       border: 1px solid var(--white-dimmest);
-      cursor: auto;
+      cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
     }
     .btn-ghost:hover { border-color: var(--white-dimmer); color: var(--white); }
@@ -269,7 +269,7 @@
       border: 1px solid var(--white-dimmest);
       background: transparent;
       color: var(--white-dim);
-      cursor: auto;
+      cursor: pointer;
       transition: all 0.2s;
     }
     .filter-btn.active, .filter-btn:hover {
@@ -310,7 +310,7 @@
       display: flex; align-items: flex-start; gap: 20px;
       padding: 20px 0;
       border-bottom: 1px solid var(--white-dimmest);
-      cursor: auto;
+      cursor: pointer;
       transition: background 0.2s;
     }
     .check-item:hover { background: var(--white-dimmest); padding-left: 12px; }
@@ -472,7 +472,7 @@
       font-family: var(--sans);
       font-size: 13px;
       font-weight: 700;
-      cursor: auto;
+      cursor: pointer;
       transition: opacity 0.2s;
     }
     .chat-send:hover { opacity: 0.85; }
@@ -488,7 +488,7 @@
       padding: 8px 16px;
       border: 1px solid var(--white-dimmest);
       color: var(--white-dim);
-      cursor: auto;
+      cursor: pointer;
       transition: all 0.2s;
     }
     .advisor-tag:hover {
@@ -843,7 +843,7 @@
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 1px;
-      cursor: auto;
+      cursor: pointer;
       z-index: 400;
       display: flex; align-items: center; gap: 10px;
       box-shadow: 0 8px 32px rgba(230,57,70,0.3);
@@ -1346,8 +1346,21 @@
     // REVEAL ON SCROLL
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.reveal').forEach(el => {
+      observer.observe(el);
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) el.classList.add('visible');
+    });
+
+    // Wake up Render backend so AI chat is ready when user needs it
+    setTimeout(() => {
+      fetch('https://layofflens.onrender.com/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'hi' })
+      }).catch(() => {});
+    }, 1000);
 
     // CHARTS
     const chartDefaults = {
@@ -1459,11 +1472,10 @@
       addMessage(msg, 'user');
       showTyping();
       try {
-        const res = await fetch('https://layofflens.onrender.com/chat', {
+        const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg }
-          })
+          body: JSON.stringify({ message: msg })
         });
         const data = await res.json();
         hideTyping();
