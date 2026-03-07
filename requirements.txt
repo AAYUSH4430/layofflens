@@ -1,0 +1,4 @@
+echo "flask
+flask-cors
+anthropic
+gunicorn" > requirements.txt
