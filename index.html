@@ -1462,12 +1462,10 @@
       addMessage(msg, 'user');
       showTyping();
       try {
-        const res = await fetch('//https://layofflens.onrender.com/chat', {
+        const res = await fetch('https://layofflens.onrender.com/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          'x-api-key': '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',
-'anthropic-version': '2023-06-01',
-'anthropic-dangerous-client-side-allow-cors': 'true',
+         
           body: JSON.stringify({ message: msg }
           })
         });
