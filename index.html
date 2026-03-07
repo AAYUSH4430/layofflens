@@ -55,8 +55,6 @@
       transition: all 0.15s ease;
     }
 
-    
-
     /* NAV */
     nav {
       position: fixed; top: 0; left: 0; right: 0;
@@ -1420,6 +1418,13 @@
       options: { ...chartDefaults, responsive: true }
     });
 
+
+    // FILTER DATA
+    function filterData(type, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
     // CHECKLIST
     function toggleCheck(item) {
       item.classList.toggle('checked');
@@ -1553,6 +1558,3 @@
   </script>
 </body>
 </html>
-
-
-
