@@ -8,1016 +8,222 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #080808;
-      --bg2: #0f0f0f;
-      --bg3: #161616;
-      --bg4: #1c1c1c;
-      --red: #E63946;
-      --red-dim: rgba(230,57,70,0.15);
-      --red-border: rgba(230,57,70,0.3);
-      --white: #FFFFFF;
-      --white-dim: rgba(240,237,232,0.5);
-      --white-dimmer: rgba(240,237,232,0.2);
-      --white-dimmest: rgba(240,237,232,0.07);
-      --mono: 'DM Mono', monospace;
-      --sans: 'Syne', sans-serif;
-      --serif: 'Instrument Serif', serif;
+      --bg: #080808; --bg2: #0f0f0f; --bg3: #161616; --bg4: #1c1c1c;
+      --red: #E63946; --red-dim: rgba(230,57,70,0.15); --red-border: rgba(230,57,70,0.3);
+      --white: #FFFFFF; --white-dim: rgba(240,237,232,0.5); --white-dimmer: rgba(240,237,232,0.2); --white-dimmest: rgba(240,237,232,0.07);
+      --mono: 'DM Mono', monospace; --sans: 'Syne', sans-serif; --serif: 'Instrument Serif', serif;
     }
-
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--sans);
-      background: var(--bg);
-      color: var(--white);
-      overflow-x: hidden;
-      cursor: none;
-    }
-
-    /* CUSTOM CURSOR */
-    .cursor {
-      width: 8px; height: 8px;
-      background: var(--red);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      transition: transform 0.1s;
-    }
-    .cursor-ring {
-      width: 32px; height: 32px;
-      border: 1px solid rgba(230,57,70,0.4);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9998;
-      transition: all 0.15s ease;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 500;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 48px;
-      border-bottom: 1px solid var(--white-dimmest);
-      background: rgba(8,8,8,0.85);
-      backdrop-filter: blur(20px);
-    }
-    .nav-logo {
-      font-family: var(--sans);
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: -0.5px;
-      color: var(--white);
-    }
+    body { font-family: var(--sans); background: var(--bg); color: var(--white); overflow-x: hidden; cursor: none; }
+    .cursor { width: 8px; height: 8px; background: var(--red); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s; }
+    .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(230,57,70,0.4); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: all 0.15s ease; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 500; display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; border-bottom: 1px solid var(--white-dimmest); background: rgba(8,8,8,0.85); backdrop-filter: blur(20px); }
+    .nav-logo { font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--white); }
     .nav-logo span { color: var(--red); }
     .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
-    .nav-links a {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--white-dim);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
+    .nav-links a { font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--white-dim); text-decoration: none; transition: color 0.2s; }
     .nav-links a:hover { color: var(--white); }
-    .nav-pill {
-      background: var(--red) !important;
-      color: var(--white) !important;
-      padding: 8px 20px;
-      border-radius: 100px;
-      font-size: 12px !important;
-    }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: center;
-      padding: 120px 48px 80px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero-grid-bg {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(240,237,232,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(240,237,232,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
-    }
-    .hero-glow {
-      position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(230,57,70,0.12) 0%, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-    .hero-eyebrow {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: var(--red);
-      text-transform: uppercase;
-      margin-bottom: 28px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .hero-eyebrow::before {
-      content: '';
-      width: 32px; height: 1px;
-      background: var(--red);
-    }
-    .hero h1 {
-      font-family: var(--serif);
-      font-size: clamp(52px, 8vw, 110px);
-      font-weight: 400;
-      line-height: 0.95;
-      letter-spacing: -2px;
-      margin-bottom: 40px;
-      max-width: 900px;
-    }
-    .hero h1 em {
-      font-style: italic;
-      color: var(--red);
-    }
-    .hero-sub {
-      font-size: 16px;
-      color: var(--white-dim);
-      line-height: 1.8;
-      max-width: 480px;
-      margin-bottom: 56px;
-      font-weight: 400;
-    }
-    .hero-counter-row {
-      display: flex; gap: 60px;
-      padding: 40px 0;
-      border-top: 1px solid var(--white-dimmest);
-      border-bottom: 1px solid var(--white-dimmest);
-      margin-bottom: 48px;
-    }
-    .hero-counter h2 {
-      font-family: var(--mono);
-      font-size: clamp(32px, 4vw, 52px);
-      font-weight: 300;
-      color: var(--red);
-      letter-spacing: -1px;
-    }
-    .hero-counter p {
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--white-dimmer);
-      margin-top: 6px;
-    }
+    .nav-pill { background: var(--red) !important; color: var(--white) !important; padding: 8px 20px; border-radius: 100px; font-size: 12px !important; }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 120px 48px 80px; position: relative; overflow: hidden; }
+    .hero-grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(240,237,232,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(240,237,232,0.03) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%); }
+    .hero-glow { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(230,57,70,0.12) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+    .hero-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 3px; color: var(--red); text-transform: uppercase; margin-bottom: 28px; display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--red); }
+    .hero h1 { font-family: var(--serif); font-size: clamp(52px, 8vw, 110px); font-weight: 400; line-height: 0.95; letter-spacing: -2px; margin-bottom: 40px; max-width: 900px; }
+    .hero h1 em { font-style: italic; color: var(--red); }
+    .hero-sub { font-size: 16px; color: var(--white-dim); line-height: 1.8; max-width: 480px; margin-bottom: 56px; font-weight: 400; }
+    .hero-counter-row { display: flex; gap: 60px; padding: 40px 0; border-top: 1px solid var(--white-dimmest); border-bottom: 1px solid var(--white-dimmest); margin-bottom: 48px; }
+    .hero-counter h2 { font-family: var(--mono); font-size: clamp(32px, 4vw, 52px); font-weight: 300; color: var(--red); letter-spacing: -1px; }
+    .hero-counter p { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dimmer); margin-top: 6px; }
     .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
-    .btn-red {
-      background: var(--red);
-      color: white;
-      padding: 16px 36px;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.2s;
-    }
+    .btn-red { background: var(--red); color: white; padding: 16px 36px; font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: opacity 0.2s, transform 0.2s; }
     .btn-red:hover { opacity: 0.85; transform: translateY(-2px); }
-    .btn-ghost {
-      background: transparent;
-      color: var(--white-dim);
-      padding: 16px 36px;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      text-decoration: none;
-      border: 1px solid var(--white-dimmest);
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
+    .btn-ghost { background: transparent; color: var(--white-dim); padding: 16px 36px; font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; border: 1px solid var(--white-dimmest); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
     .btn-ghost:hover { border-color: var(--white-dimmer); color: var(--white); }
 
     /* TICKER */
-    .ticker {
-      background: var(--red);
-      padding: 12px 0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    .ticker-track {
-      display: inline-block;
-      animation: ticker 25s linear infinite;
-    }
-    .ticker-track span {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.8);
-      margin: 0 32px;
-    }
-    .ticker-track .sep { color: rgba(255,255,255,0.3); }
+    .ticker { background: var(--red); padding: 12px 0; overflow: hidden; white-space: nowrap; position: relative; }
+    .ticker-label { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; padding: 0 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: white; z-index: 2; white-space: nowrap; }
+    .ticker-track { display: inline-block; animation: ticker 60s linear infinite; padding-left: 140px; }
+    .ticker-track span { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.9); margin: 0 24px; }
+    .ticker-track .sep { color: rgba(255,255,255,0.4); margin: 0 8px; }
     @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    /* SECTIONS */
     section { padding: 100px 48px; }
-    .section-label {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--red);
-      margin-bottom: 20px;
-      display: flex; align-items: center; gap: 12px;
-    }
+    .section-label { font-family: var(--mono); font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--red); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
     .section-label::before { content: ''; width: 24px; height: 1px; background: var(--red); }
-    .section-title {
-      font-family: var(--serif);
-      font-size: clamp(36px, 5vw, 64px);
-      font-weight: 400;
-      line-height: 1.05;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
-    }
-    .section-sub {
-      font-size: 15px;
-      color: var(--white-dim);
-      line-height: 1.8;
-      max-width: 500px;
-    }
-
-    /* DASHBOARD */
+    .section-title { font-family: var(--serif); font-size: clamp(36px, 5vw, 64px); font-weight: 400; line-height: 1.05; letter-spacing: -1px; margin-bottom: 16px; }
+    .section-sub { font-size: 15px; color: var(--white-dim); line-height: 1.8; max-width: 500px; }
     .dashboard { background: var(--bg); }
     .dashboard-header { margin-bottom: 60px; }
-    .filters {
-      display: flex; gap: 12px; flex-wrap: wrap;
-      margin-bottom: 48px;
-    }
-    .filter-btn {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 10px 20px;
-      border: 1px solid var(--white-dimmest);
-      background: transparent;
-      color: var(--white-dim);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .filter-btn.active, .filter-btn:hover {
-      border-color: var(--red);
-      color: var(--white);
-      background: var(--red-dim);
-    }
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2px;
-    }
-    .chart-card {
-      background: var(--bg3);
-      padding: 36px;
-      border: 1px solid var(--white-dimmest);
-    }
-    .chart-card h3 {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--white-dimmer);
-      margin-bottom: 24px;
-    }
+    .filters { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+    .filter-btn { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 10px 20px; border: 1px solid var(--white-dimmest); background: transparent; color: var(--white-dim); cursor: pointer; transition: all 0.2s; }
+    .filter-btn.active, .filter-btn:hover { border-color: var(--red); color: var(--white); background: var(--red-dim); }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .chart-card { background: var(--bg3); padding: 36px; border: 1px solid var(--white-dimmest); }
+    .chart-card h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dimmer); margin-bottom: 24px; }
     .chart-card.full { grid-column: 1 / -1; }
-
-    /* ARE YOU NEXT */
     .next-section { background: var(--bg2); }
-    .next-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-    }
+    .next-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
     .checklist { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
-    .check-item {
-      display: flex; align-items: flex-start; gap: 20px;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--white-dimmest);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+    .check-item { display: flex; align-items: flex-start; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--white-dimmest); cursor: pointer; transition: background 0.2s; }
     .check-item:hover { background: var(--white-dimmest); padding-left: 12px; }
-    .check-box {
-      width: 20px; height: 20px;
-      border: 1px solid var(--white-dimmer);
-      flex-shrink: 0;
-      margin-top: 2px;
-      transition: all 0.2s;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-    }
-    .check-item.checked .check-box {
-      background: var(--red);
-      border-color: var(--red);
-    }
+    .check-box { width: 20px; height: 20px; border: 1px solid var(--white-dimmer); flex-shrink: 0; margin-top: 2px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .check-item.checked .check-box { background: var(--red); border-color: var(--red); }
     .check-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
     .check-item p { font-size: 13px; color: var(--white-dim); line-height: 1.6; }
-    .score-panel {
-      background: var(--bg3);
-      border: 1px solid var(--white-dimmest);
-      padding: 40px;
-      position: sticky;
-      top: 100px;
-    }
-    .score-panel h3 {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--white-dimmer);
-      margin-bottom: 30px;
-    }
-    .score-display {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .score-num {
-      font-family: var(--serif);
-      font-size: 80px;
-      line-height: 1;
-      color: var(--red);
-    }
+    .score-panel { background: var(--bg3); border: 1px solid var(--white-dimmest); padding: 40px; position: sticky; top: 100px; }
+    .score-panel h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dimmer); margin-bottom: 30px; }
+    .score-display { text-align: center; margin-bottom: 30px; }
+    .score-num { font-family: var(--serif); font-size: 80px; line-height: 1; color: var(--red); }
     .score-label { font-size: 13px; color: var(--white-dim); margin-top: 8px; }
-    .score-bar-wrap {
-      height: 4px;
-      background: var(--white-dimmest);
-      margin-bottom: 30px;
-    }
-    .score-bar {
-      height: 100%;
-      background: var(--red);
-      width: 0%;
-      transition: width 0.5s ease;
-    }
-    .score-advice {
-      font-size: 14px;
-      color: var(--white-dim);
-      line-height: 1.7;
-      padding: 20px;
-      background: var(--red-dim);
-      border-left: 2px solid var(--red);
-    }
-
-    /* AI ADVISOR */
+    .score-bar-wrap { height: 4px; background: var(--white-dimmest); margin-bottom: 30px; }
+    .score-bar { height: 100%; background: var(--red); width: 0%; transition: width 0.5s ease; }
+    .score-advice { font-size: 14px; color: var(--white-dim); line-height: 1.7; padding: 20px; background: var(--red-dim); border-left: 2px solid var(--red); }
     .advisor { background: var(--bg); }
-    .advisor-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-    }
-    .advisor-chat {
-      background: var(--bg3);
-      border: 1px solid var(--white-dimmest);
-      display: flex; flex-direction: column;
-      height: 520px;
-    }
-    .chat-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--white-dimmest);
-      display: flex; align-items: center; gap: 12px;
-    }
-    .chat-dot {
-      width: 8px; height: 8px;
-      background: var(--red);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
+    .advisor-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .advisor-chat { background: var(--bg3); border: 1px solid var(--white-dimmest); display: flex; flex-direction: column; height: 520px; }
+    .chat-header { padding: 20px 24px; border-bottom: 1px solid var(--white-dimmest); display: flex; align-items: center; gap: 12px; }
+    .chat-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     .chat-title { font-size: 13px; font-weight: 600; }
     .chat-sub { font-size: 11px; color: var(--white-dim); }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
-      display: flex; flex-direction: column; gap: 16px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--white-dimmest) transparent;
-    }
-    .msg {
-      max-width: 85%;
-      padding: 14px 18px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .msg-ai {
-      background: var(--bg4);
-      border: 1px solid var(--white-dimmest);
-      align-self: flex-start;
-      color: var(--white);
-    }
-    .msg-user {
-      background: var(--red);
-      align-self: flex-end;
-      color: white;
-    }
-    .msg-typing {
-      background: var(--bg4);
-      border: 1px solid var(--white-dimmest);
-      align-self: flex-start;
-      padding: 18px;
-      display: none;
-    }
-    .typing-dots span {
-      width: 6px; height: 6px;
-      background: var(--white-dim);
-      border-radius: 50%;
-      display: inline-block;
-      margin: 0 2px;
-      animation: dot 1.4s infinite;
-    }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; scrollbar-width: thin; scrollbar-color: var(--white-dimmest) transparent; }
+    .msg { max-width: 85%; padding: 14px 18px; font-size: 14px; line-height: 1.6; }
+    .msg-ai { background: var(--bg4); border: 1px solid var(--white-dimmest); align-self: flex-start; color: var(--white); }
+    .msg-user { background: var(--red); align-self: flex-end; color: white; }
+    .msg-typing { background: var(--bg4); border: 1px solid var(--white-dimmest); align-self: flex-start; padding: 18px; display: none; }
+    .typing-dots span { width: 6px; height: 6px; background: var(--white-dim); border-radius: 50%; display: inline-block; margin: 0 2px; animation: dot 1.4s infinite; }
     .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes dot { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-    .chat-input-wrap {
-      padding: 16px 20px;
-      border-top: 1px solid var(--white-dimmest);
-      display: flex; gap: 12px;
-    }
-    .chat-input {
-      flex: 1;
-      background: var(--bg4);
-      border: 1px solid var(--white-dimmest);
-      color: var(--white);
-      padding: 12px 16px;
-      font-family: var(--sans);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+    .chat-input-wrap { padding: 16px 20px; border-top: 1px solid var(--white-dimmest); display: flex; gap: 12px; }
+    .chat-input { flex: 1; background: var(--bg4); border: 1px solid var(--white-dimmest); color: var(--white); padding: 12px 16px; font-family: var(--sans); font-size: 14px; outline: none; transition: border-color 0.2s; }
     .chat-input:focus { border-color: var(--red); }
     .chat-input::placeholder { color: var(--white-dimmer); }
-    .chat-send {
-      background: var(--red);
-      border: none;
-      color: white;
-      padding: 12px 20px;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
+    .chat-send { background: var(--red); border: none; color: white; padding: 12px 20px; font-family: var(--sans); font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
     .chat-send:hover { opacity: 0.85; }
     .advisor-info { padding-top: 20px; }
-    .advisor-tags {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin-top: 32px;
-    }
-    .advisor-tag {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 1px;
-      padding: 8px 16px;
-      border: 1px solid var(--white-dimmest);
-      color: var(--white-dim);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .advisor-tag:hover {
-      border-color: var(--red);
-      color: var(--white);
-      background: var(--red-dim);
-    }
-
-    /* STORIES */
+    .advisor-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+    .advisor-tag { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; padding: 8px 16px; border: 1px solid var(--white-dimmest); color: var(--white-dim); cursor: pointer; transition: all 0.2s; }
+    .advisor-tag:hover { border-color: var(--red); color: var(--white); background: var(--red-dim); }
     .stories { background: var(--bg2); }
     .stories-header { margin-bottom: 60px; }
-    .stories-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      margin-bottom: 40px;
-    }
-    .story-card {
-      background: var(--bg3);
-      padding: 32px;
-      border: 1px solid var(--white-dimmest);
-      transition: border-color 0.2s;
-    }
+    .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 40px; }
+    .story-card { background: var(--bg3); padding: 32px; border: 1px solid var(--white-dimmest); transition: border-color 0.2s; }
     .story-card:hover { border-color: var(--red-border); }
-    .story-meta {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px;
-    }
-    .story-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--red);
-      background: var(--red-dim);
-      padding: 4px 10px;
-    }
-    .story-date {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--white-dimmer);
-    }
-    .story-card p {
-      font-size: 14px;
-      color: var(--white-dim);
-      line-height: 1.8;
-      font-style: italic;
-    }
-    .story-card .story-anon {
-      margin-top: 20px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--white-dimmer);
-    }
-    .share-story {
-      background: var(--bg3);
-      border: 1px solid var(--white-dimmest);
-      padding: 48px;
-    }
-    .share-story h3 {
-      font-family: var(--serif);
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
+    .story-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .story-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); background: var(--red-dim); padding: 4px 10px; }
+    .story-date { font-family: var(--mono); font-size: 10px; color: var(--white-dimmer); }
+    .story-card p { font-size: 14px; color: var(--white-dim); line-height: 1.8; font-style: italic; }
+    .story-card .story-anon { margin-top: 20px; font-family: var(--mono); font-size: 11px; color: var(--white-dimmer); }
+    .share-story { background: var(--bg3); border: 1px solid var(--white-dimmest); padding: 48px; }
+    .share-story h3 { font-family: var(--serif); font-size: 32px; margin-bottom: 8px; }
     .share-story p { font-size: 14px; color: var(--white-dim); margin-bottom: 32px; }
     .share-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .share-form select,
-    .share-form textarea,
-    .share-form input {
-      background: var(--bg4);
-      border: 1px solid var(--white-dimmest);
-      color: var(--white);
-      padding: 14px 18px;
-      font-family: var(--sans);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-      width: 100%;
-    }
-    .share-form select:focus,
-    .share-form textarea:focus,
-    .share-form input:focus { border-color: var(--red); }
+    .share-form select, .share-form textarea, .share-form input { background: var(--bg4); border: 1px solid var(--white-dimmest); color: var(--white); padding: 14px 18px; font-family: var(--sans); font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; }
+    .share-form select:focus, .share-form textarea:focus, .share-form input:focus { border-color: var(--red); }
     .share-form select option { background: var(--bg3); }
     .share-form textarea { grid-column: 1 / -1; height: 120px; resize: none; }
     .share-form .full { grid-column: 1 / -1; }
-    .share-form input::placeholder,
-    .share-form textarea::placeholder { color: var(--white-dimmer); }
-
-    /* JOB BOARD */
+    .share-form input::placeholder, .share-form textarea::placeholder { color: var(--white-dimmer); }
     .jobs-section { background: var(--bg); }
-    .jobs-search-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 36px;
-      background: var(--bg3);
-      border: 1px solid var(--white-dimmest);
-      padding: 20px;
-    }
-    .jobs-search-bar input,
-    .jobs-search-bar select {
-      background: var(--bg4);
-      border: 1px solid var(--white-dimmest);
-      color: var(--white);
-      padding: 12px 16px;
-      font-family: var(--mono);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+    .jobs-search-bar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 36px; background: var(--bg3); border: 1px solid var(--white-dimmest); padding: 20px; }
+    .jobs-search-bar input, .jobs-search-bar select { background: var(--bg4); border: 1px solid var(--white-dimmest); color: var(--white); padding: 12px 16px; font-family: var(--mono); font-size: 13px; outline: none; transition: border-color 0.2s; }
     .jobs-search-bar input { flex: 1; min-width: 200px; }
-    .jobs-search-bar input:focus,
-    .jobs-search-bar select:focus { border-color: var(--red); }
+    .jobs-search-bar input:focus, .jobs-search-bar select:focus { border-color: var(--red); }
     .jobs-search-bar select option { background: var(--bg3); }
     .jobs-search-bar input::placeholder { color: var(--white-dimmer); }
-    .jobs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 2px;
-      min-height: 200px;
-    }
-    .job-card {
-      background: var(--bg3);
-      border: 1px solid var(--white-dimmest);
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      transition: border-color 0.2s;
-    }
+    .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2px; min-height: 200px; }
+    .job-card { background: var(--bg3); border: 1px solid var(--white-dimmest); padding: 28px; display: flex; flex-direction: column; gap: 14px; transition: border-color 0.2s; }
     .job-card:hover { border-color: var(--red-border); }
     .job-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
     .job-title { font-size: 15px; font-weight: 700; color: var(--white); line-height: 1.3; margin-bottom: 6px; }
     .job-company { font-family: var(--mono); font-size: 12px; color: var(--red); letter-spacing: 1px; }
-    .job-new-badge {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--red);
-      background: var(--red-dim);
-      border: 1px solid var(--red-border);
-      padding: 4px 10px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
+    .job-new-badge { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); background: var(--red-dim); border: 1px solid var(--red-border); padding: 4px 10px; white-space: nowrap; flex-shrink: 0; }
     .job-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .job-tag {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--white-dimmer);
-      background: var(--white-dimmest);
-      padding: 4px 10px;
-      letter-spacing: 0.5px;
-    }
-    .job-desc {
-      font-size: 13px;
-      color: var(--white-dim);
-      line-height: 1.7;
-      flex: 1;
-    }
-    .job-apply {
-      display: block;
-      text-align: center;
-      background: var(--red);
-      color: white;
-      padding: 12px 20px;
-      font-family: var(--sans);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: opacity 0.2s, transform 0.2s;
-      border: none;
-      cursor: pointer;
-      margin-top: 4px;
-    }
+    .job-tag { font-family: var(--mono); font-size: 11px; color: var(--white-dimmer); background: var(--white-dimmest); padding: 4px 10px; letter-spacing: 0.5px; }
+    .job-desc { font-size: 13px; color: var(--white-dim); line-height: 1.7; flex: 1; }
+    .job-apply { display: block; text-align: center; background: var(--red); color: white; padding: 12px 20px; font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; transition: opacity 0.2s, transform 0.2s; border: none; cursor: pointer; margin-top: 4px; }
     .job-apply:hover { opacity: 0.85; transform: translateY(-1px); }
-    .jobs-empty {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--white-dimmer);
-    }
+    .jobs-empty { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: var(--white-dimmer); }
     .jobs-empty-icon { font-size: 48px; margin-bottom: 16px; }
     .jobs-empty p { font-family: var(--mono); font-size: 13px; letter-spacing: 1px; }
-    .jobs-stats {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--white-dimmer);
-      letter-spacing: 1px;
-      margin-bottom: 24px;
-      min-height: 20px;
-    }
+    .jobs-stats { font-family: var(--mono); font-size: 12px; color: var(--white-dimmer); letter-spacing: 1px; margin-bottom: 24px; min-height: 20px; }
     .jobs-stats strong { color: var(--red); }
-    .jobs-pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-top: 48px;
-    }
-    .jobs-pagination button {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 10px 20px;
-      border: 1px solid var(--white-dimmest);
-      background: transparent;
-      color: var(--white-dim);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .jobs-pagination button:hover {
-      border-color: var(--red);
-      color: var(--white);
-      background: var(--red-dim);
-    }
-    .jobs-pagination span {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--white-dimmer);
-      letter-spacing: 1px;
-    }
-
-    /* FOOTER */
-    footer {
-      background: var(--bg);
-      border-top: 1px solid var(--white-dimmest);
-      padding: 48px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .footer-left h3 {
-      font-family: var(--sans);
-      font-weight: 800;
-      font-size: 18px;
-      margin-bottom: 6px;
-    }
+    .jobs-pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 48px; }
+    .jobs-pagination button { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 10px 20px; border: 1px solid var(--white-dimmest); background: transparent; color: var(--white-dim); cursor: pointer; transition: all 0.2s; }
+    .jobs-pagination button:hover { border-color: var(--red); color: var(--white); background: var(--red-dim); }
+    .jobs-pagination span { font-family: var(--mono); font-size: 11px; color: var(--white-dimmer); letter-spacing: 1px; }
+    footer { background: var(--bg); border-top: 1px solid var(--white-dimmest); padding: 48px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-left h3 { font-family: var(--sans); font-weight: 800; font-size: 18px; margin-bottom: 6px; }
     .footer-left h3 span { color: var(--red); }
     .footer-left p { font-size: 13px; color: var(--white-dimmer); }
     footer nav { position: static; background: none; border: none; padding: 0; backdrop-filter: none; }
-    footer nav a {
-      font-size: 12px;
-      color: var(--white-dimmer);
-      text-decoration: none;
-      margin-left: 24px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
+    footer nav a { font-size: 12px; color: var(--white-dimmer); text-decoration: none; margin-left: 24px; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
     footer nav a:hover { color: var(--white); }
-
-    /* ANIMATIONS */
-    .reveal {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* BREATHING */
-    .breathe-section {
-      background: var(--bg);
-      padding: 80px 48px;
-      text-align: center;
-      border-top: 1px solid var(--white-dimmest);
-      border-bottom: 1px solid var(--white-dimmest);
-    }
-    .breathe-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 4px;
-      color: var(--red);
-      text-transform: uppercase;
-      margin-bottom: 40px;
-    }
-    .breathe-circle {
-      width: 180px; height: 180px;
-      border-radius: 50%;
-      border: 1px solid rgba(230,57,70,0.3);
-      margin: 0 auto 32px;
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-      animation: breatheAnim 8s ease-in-out infinite;
-    }
-    .breathe-circle::before {
-      content: '';
-      position: absolute; inset: 12px;
-      border-radius: 50%;
-      border: 1px solid rgba(230,57,70,0.2);
-      animation: breatheAnim 8s ease-in-out infinite;
-      animation-delay: 0.5s;
-    }
-    .breathe-circle::after {
-      content: '';
-      position: absolute; inset: 24px;
-      border-radius: 50%;
-      background: rgba(230,57,70,0.05);
-      animation: breatheAnim 8s ease-in-out infinite;
-      animation-delay: 1s;
-    }
-    @keyframes breatheAnim {
-      0%, 100% { transform: scale(1); opacity: 0.6; }
-      50% { transform: scale(1.2); opacity: 1; }
-    }
-    .breathe-text {
-      font-family: var(--serif);
-      font-size: 22px;
-      color: var(--white-dim);
-      animation: breatheText 8s ease-in-out infinite;
-    }
-    @keyframes breatheText {
-      0%, 100% { opacity: 0.5; }
-      30% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    .breathe-instruction {
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--white-dimmer);
-      margin-top: 16px;
-      animation: breathePhase 8s ease-in-out infinite;
-    }
-    @keyframes breathePhase {
-      0%, 10% { opacity: 1; }
-      30%, 45% { opacity: 0.5; }
-      50%, 60% { opacity: 1; }
-      80%, 100% { opacity: 0.5; }
-    }
-    .live-counter {
-      margin-top: 48px;
-      padding: 24px 40px;
-      border: 1px solid var(--white-dimmest);
-      display: inline-block;
-    }
-    .live-counter h3 {
-      font-family: var(--serif);
-      font-size: 48px;
-      color: var(--red);
-      margin-bottom: 8px;
-    }
-    .live-counter p {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--white-dimmer);
-    }
-    .live-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      background: var(--red);
-      border-radius: 50%;
-      margin-right: 8px;
-      animation: pulse 2s infinite;
-    }
-
-    /* SURVIVED SECTION */
+    .breathe-section { background: var(--bg); padding: 80px 48px; text-align: center; border-top: 1px solid var(--white-dimmest); border-bottom: 1px solid var(--white-dimmest); }
+    .breathe-label { font-family: var(--mono); font-size: 11px; letter-spacing: 4px; color: var(--red); text-transform: uppercase; margin-bottom: 40px; }
+    .breathe-circle { width: 180px; height: 180px; border-radius: 50%; border: 1px solid rgba(230,57,70,0.3); margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; position: relative; animation: breatheAnim 8s ease-in-out infinite; }
+    .breathe-circle::before { content: ''; position: absolute; inset: 12px; border-radius: 50%; border: 1px solid rgba(230,57,70,0.2); animation: breatheAnim 8s ease-in-out infinite; animation-delay: 0.5s; }
+    .breathe-circle::after { content: ''; position: absolute; inset: 24px; border-radius: 50%; background: rgba(230,57,70,0.05); animation: breatheAnim 8s ease-in-out infinite; animation-delay: 1s; }
+    @keyframes breatheAnim { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 1; } }
+    .breathe-text { font-family: var(--serif); font-size: 22px; color: var(--white-dim); animation: breatheText 8s ease-in-out infinite; }
+    @keyframes breatheText { 0%, 100% { opacity: 0.5; } 30% { opacity: 1; } 50% { opacity: 0.7; } }
+    .breathe-instruction { font-family: var(--mono); font-size: 13px; color: var(--white-dimmer); margin-top: 16px; }
+    .live-counter { margin-top: 48px; padding: 24px 40px; border: 1px solid var(--white-dimmest); display: inline-block; }
+    .live-counter h3 { font-family: var(--serif); font-size: 48px; color: var(--red); margin-bottom: 8px; }
+    .live-counter p { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dimmer); }
+    .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--red); border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
     .survived { background: var(--bg2); padding: 100px 48px; }
     .survived-header { text-align: center; margin-bottom: 70px; }
     .survived-header .section-sub { margin: 0 auto; }
-    .survived-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      max-width: 1200px;
-      margin: 0 auto 80px;
-    }
-    .survived-card {
-      background: var(--bg3);
-      padding: 40px 32px;
-      border: 1px solid var(--white-dimmest);
-      transition: border-color 0.3s;
-    }
+    .survived-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-width: 1200px; margin: 0 auto 80px; }
+    .survived-card { background: var(--bg3); padding: 40px 32px; border: 1px solid var(--white-dimmest); transition: border-color 0.3s; }
     .survived-card:hover { border-color: var(--red-border); }
-    .survived-quote {
-      font-family: var(--serif);
-      font-size: 18px;
-      font-style: italic;
-      color: var(--white);
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    .survived-quote::before {
-      content: '"';
-      font-size: 60px;
-      color: var(--red);
-      opacity: 0.3;
-      line-height: 0;
-      vertical-align: -24px;
-      margin-right: 4px;
-      font-family: var(--serif);
-    }
-    .survived-person {
-      display: flex; align-items: center; gap: 16px;
-    }
-    .survived-emoji {
-      width: 44px; height: 44px;
-      background: var(--red-dim);
-      border: 1px solid var(--red-border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
+    .survived-quote { font-family: var(--serif); font-size: 18px; font-style: italic; color: var(--white); line-height: 1.6; margin-bottom: 24px; }
+    .survived-quote::before { content: '"'; font-size: 60px; color: var(--red); opacity: 0.3; line-height: 0; vertical-align: -24px; margin-right: 4px; font-family: var(--serif); }
+    .survived-person { display: flex; align-items: center; gap: 16px; }
+    .survived-emoji { width: 44px; height: 44px; background: var(--red-dim); border: 1px solid var(--red-border); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
     .survived-person h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
     .survived-person p { font-size: 12px; color: var(--red); font-family: var(--mono); letter-spacing: 1px; }
-
-    /* DAILY MESSAGE */
-    .daily-msg {
-      background: var(--bg3);
-      border: 1px solid var(--red-border);
-      padding: 48px;
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-      position: relative;
-    }
-    .daily-msg::before {
-      content: 'TODAY\'S MESSAGE';
-      position: absolute;
-      top: -10px; left: 50%;
-      transform: translateX(-50%);
-      background: var(--red);
-      color: white;
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 3px;
-      padding: 4px 16px;
-    }
-    .daily-msg p {
-      font-family: var(--serif);
-      font-size: clamp(22px, 3vw, 32px);
-      font-style: italic;
-      color: var(--white);
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-    .daily-msg span {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--white-dimmer);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    /* RESOURCES */
+    .daily-msg { background: var(--bg3); border: 1px solid var(--red-border); padding: 48px; text-align: center; max-width: 800px; margin: 0 auto; position: relative; }
+    .daily-msg::before { content: 'TODAY\'S MESSAGE'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--red); color: white; font-family: var(--mono); font-size: 10px; letter-spacing: 3px; padding: 4px 16px; }
+    .daily-msg p { font-family: var(--serif); font-size: clamp(22px, 3vw, 32px); font-style: italic; color: var(--white); line-height: 1.5; margin-bottom: 24px; }
+    .daily-msg span { font-family: var(--mono); font-size: 11px; color: var(--white-dimmer); letter-spacing: 2px; text-transform: uppercase; }
     .resources { background: var(--bg); padding: 100px 48px; }
-    .resources-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-      margin-top: 60px;
-    }
-    .resource-card {
-      background: var(--bg3);
-      padding: 32px 28px;
-      border: 1px solid var(--white-dimmest);
-      transition: border-color 0.2s;
-    }
+    .resources-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .resource-card { background: var(--bg3); padding: 32px 28px; border: 1px solid var(--white-dimmest); transition: border-color 0.2s; }
     .resource-card:hover { border-color: var(--red-border); }
     .resource-icon { font-size: 32px; margin-bottom: 20px; }
     .resource-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
     .resource-card p { font-size: 13px; color: var(--white-dim); line-height: 1.7; margin-bottom: 20px; }
     .resource-links { display: flex; flex-direction: column; gap: 8px; }
-    .resource-link {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: var(--red);
-      text-decoration: none;
-      display: flex; align-items: center; gap: 8px;
-      transition: opacity 0.2s;
-    }
+    .resource-link { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--red); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: opacity 0.2s; }
     .resource-link:hover { opacity: 0.7; }
     .resource-link::before { content: '→'; }
-
-    /* FLOATING CHAT BTN */
-    .float-chat {
-      position: fixed;
-      bottom: 32px; right: 32px;
-      background: var(--red);
-      color: white;
-      border: none;
-      padding: 16px 24px;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      z-index: 400;
-      display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 8px 32px rgba(230,57,70,0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
-      animation: floatIn 0.5s ease 2s both;
-    }
+    .float-chat { position: fixed; bottom: 32px; right: 32px; background: var(--red); color: white; border: none; padding: 16px 24px; font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer; z-index: 400; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(230,57,70,0.3); transition: transform 0.2s, box-shadow 0.2s; animation: floatIn 0.5s ease 2s both; }
     @keyframes floatIn { from { transform: translateY(80px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .float-chat:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(230,57,70,0.4); }
     .float-chat-dot { width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulse 2s infinite; }
-
     @media (max-width: 900px) {
-      nav { padding: 16px 24px; }
-      .nav-links { display: none; }
-      section { padding: 70px 24px; }
-      .hero { padding: 120px 24px 70px; }
-      .hero-counter-row { gap: 30px; flex-wrap: wrap; }
-      .charts-grid { grid-template-columns: 1fr; }
-      .next-inner { grid-template-columns: 1fr; }
-      .advisor-inner { grid-template-columns: 1fr; }
-      .stories-grid { grid-template-columns: 1fr; }
-      .share-form { grid-template-columns: 1fr; }
-      .share-form textarea { grid-column: 1; }
-      .share-form .full { grid-column: 1; }
-      .jobs-grid { grid-template-columns: 1fr; }
-      .resources-grid { grid-template-columns: 1fr 1fr; }
-      .survived-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 24px; text-align: center; }
+      nav { padding: 16px 24px; } .nav-links { display: none; } section { padding: 70px 24px; }
+      .hero { padding: 120px 24px 70px; } .hero-counter-row { gap: 30px; flex-wrap: wrap; }
+      .charts-grid { grid-template-columns: 1fr; } .next-inner { grid-template-columns: 1fr; }
+      .advisor-inner { grid-template-columns: 1fr; } .stories-grid { grid-template-columns: 1fr; }
+      .share-form { grid-template-columns: 1fr; } .share-form textarea { grid-column: 1; } .share-form .full { grid-column: 1; }
+      .jobs-grid { grid-template-columns: 1fr; } .resources-grid { grid-template-columns: 1fr 1fr; }
+      .survived-grid { grid-template-columns: 1fr; } footer { flex-direction: column; gap: 24px; text-align: center; }
     }
   </style>
 </head>
 <body>
-
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- NAV -->
   <nav>
     <div class="nav-logo">Layoff<span>Lens</span></div>
     <ul class="nav-links">
@@ -1030,7 +236,6 @@
     </ul>
   </nav>
 
-  <!-- HERO -->
   <section class="hero" id="home">
     <div class="hero-grid-bg"></div>
     <div class="hero-glow"></div>
@@ -1038,22 +243,10 @@
     <h1>The Human Side<br/>of the <em>Layoff</em> Crisis</h1>
     <p class="hero-sub">Real data. Real stories. Real advice. Because behind every layoff statistic is a person trying to figure out what's next.</p>
     <div class="hero-counter-row">
-      <div class="hero-counter">
-        <h2 id="totalCount">247,832</h2>
-        <p>People Laid Off in 2025</p>
-      </div>
-      <div class="hero-counter">
-        <h2>1,200+</h2>
-        <p>Companies Affected</p>
-      </div>
-      <div class="hero-counter">
-        <h2>50+</h2>
-        <p>Countries Impacted</p>
-      </div>
-      <div class="hero-counter">
-        <h2>Tech</h2>
-        <p>Hardest Hit Sector</p>
-      </div>
+      <div class="hero-counter"><h2 id="totalCount">247,832</h2><p>People Laid Off in 2025</p></div>
+      <div class="hero-counter"><h2>1,200+</h2><p>Companies Affected</p></div>
+      <div class="hero-counter"><h2>50+</h2><p>Countries Impacted</p></div>
+      <div class="hero-counter"><h2>Tech</h2><p>Hardest Hit Sector</p></div>
     </div>
     <div class="hero-btns">
       <a href="#dashboard" class="btn-red">Explore the Data</a>
@@ -1061,33 +254,14 @@
     </div>
   </section>
 
-  <!-- TICKER -->
+  <!-- LIVE NEWS TICKER -->
   <div class="ticker">
-    <div class="ticker-track">
-      <span>Tech <span class="sep">—</span> 390,703 laid off</span>
-      <span>★</span>
-      <span>Finance <span class="sep">—</span> 391,075 laid off</span>
-      <span>★</span>
-      <span>Energy <span class="sep">—</span> 391,285 laid off</span>
-      <span>★</span>
-      <span>Retail <span class="sep">—</span> 379,848 laid off</span>
-      <span>★</span>
-      <span>Healthcare <span class="sep">—</span> 370,210 laid off</span>
-      <span>★</span>
-      <span>AI & Automation replacing jobs at record pace</span>
-      <span>★</span>
-      <span>Tech <span class="sep">—</span> 390,703 laid off</span>
-      <span>★</span>
-      <span>Finance <span class="sep">—</span> 391,075 laid off</span>
-      <span>★</span>
-      <span>Energy <span class="sep">—</span> 391,285 laid off</span>
-      <span>★</span>
-      <span>Retail <span class="sep">—</span> 379,848 laid off</span>
-      <span>★</span>
+    <div class="ticker-label">LIVE NEWS</div>
+    <div class="ticker-track" id="tickerTrack">
+      <span>Loading live layoff news...</span>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
   <section class="dashboard reveal" id="dashboard">
     <div class="dashboard-header">
       <div class="section-label">Global Data</div>
@@ -1103,22 +277,12 @@
       <button class="filter-btn" onclick="filterData('energy', this)">Energy</button>
     </div>
     <div class="charts-grid">
-      <div class="chart-card">
-        <h3>Layoffs by Industry</h3>
-        <canvas id="industryChart" height="280"></canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Top Countries Affected</h3>
-        <canvas id="countryChart" height="280"></canvas>
-      </div>
-      <div class="chart-card full">
-        <h3>Layoff Trend Over Time (2020–2026)</h3>
-        <canvas id="trendChart" height="200"></canvas>
-      </div>
+      <div class="chart-card"><h3>Layoffs by Industry</h3><canvas id="industryChart" height="280"></canvas></div>
+      <div class="chart-card"><h3>Top Countries Affected</h3><canvas id="countryChart" height="280"></canvas></div>
+      <div class="chart-card full"><h3>Layoff Trend Over Time (2020–2026)</h3><canvas id="trendChart" height="200"></canvas></div>
     </div>
   </section>
 
-  <!-- ARE YOU NEXT -->
   <section class="next-section reveal" id="next">
     <div class="next-inner">
       <div>
@@ -1126,77 +290,22 @@
         <h2 class="section-title">Is Your Company<br/>About to <em>Cut?</em></h2>
         <p class="section-sub">These are the real signals that companies show before announcing layoffs. Check the ones you're seeing at your workplace.</p>
         <div class="checklist" id="checklist">
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Hiring freeze announced</h4>
-              <p>Open roles suddenly disappear or are put "on hold indefinitely" — classic pre-layoff signal.</p>
-            </div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Senior leaders quietly leaving</h4>
-              <p>When VPs and Directors start leaving without clear successors, they know something you don't.</p>
-            </div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Budget cuts across teams</h4>
-              <p>Travel, software subscriptions, team events suddenly cancelled — money is being saved for something.</p>
-            </div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Unusual all-hands or town halls</h4>
-              <p>Emergency meetings with vague "strategic realignment" language from leadership. Watch for this one.</p>
-            </div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Performance reviews suddenly intensified</h4>
-              <p>Companies often build a paper trail before cuts. New KPIs, PIPs, and reviews out of nowhere.</p>
-            </div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Revenue miss or investor pressure</h4>
-              <p>A bad earnings call or activist investor involvement almost always precedes workforce reduction.</p>
-            </div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Your manager avoids 1:1s</h4>
-              <p>When managers go quiet and become evasive, they're often under NDA about incoming changes.</p>
-            </div>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)">
-            <div class="check-box">✓</div>
-            <div>
-              <h4>Consultants or "efficiency experts" arrive</h4>
-              <p>McKinsey, Bain, or similar firms walking around the office is rarely a good sign for headcount.</p>
-            </div>
-          </div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Hiring freeze announced</h4><p>Open roles suddenly disappear or are put "on hold indefinitely" — classic pre-layoff signal.</p></div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Senior leaders quietly leaving</h4><p>When VPs and Directors start leaving without clear successors, they know something you don't.</p></div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Budget cuts across teams</h4><p>Travel, software subscriptions, team events suddenly cancelled — money is being saved for something.</p></div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Unusual all-hands or town halls</h4><p>Emergency meetings with vague "strategic realignment" language from leadership. Watch for this one.</p></div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Performance reviews suddenly intensified</h4><p>Companies often build a paper trail before cuts. New KPIs, PIPs, and reviews out of nowhere.</p></div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Revenue miss or investor pressure</h4><p>A bad earnings call or activist investor involvement almost always precedes workforce reduction.</p></div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Your manager avoids 1:1s</h4><p>When managers go quiet and become evasive, they're often under NDA about incoming changes.</p></div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><h4>Consultants or "efficiency experts" arrive</h4><p>McKinsey, Bain, or similar firms walking around the office is rarely a good sign for headcount.</p></div></div>
         </div>
       </div>
       <div>
         <div class="score-panel">
           <h3>Your Risk Assessment</h3>
-          <div class="score-display">
-            <div class="score-num" id="scoreNum">0</div>
-            <div class="score-label">out of 8 warning signs</div>
-          </div>
-          <div class="score-bar-wrap">
-            <div class="score-bar" id="scoreBar"></div>
-          </div>
-          <div class="score-advice" id="scoreAdvice">
-            Check the warning signs you're currently experiencing at your company to see your risk level.
-          </div>
+          <div class="score-display"><div class="score-num" id="scoreNum">0</div><div class="score-label">out of 8 warning signs</div></div>
+          <div class="score-bar-wrap"><div class="score-bar" id="scoreBar"></div></div>
+          <div class="score-advice" id="scoreAdvice">Check the warning signs you're currently experiencing at your company to see your risk level.</div>
           <br/>
           <a href="#advisor" class="btn-red" style="display:block;text-align:center;text-decoration:none;margin-top:16px">Talk to AI Advisor →</a>
         </div>
@@ -1204,7 +313,6 @@
     </div>
   </section>
 
-  <!-- AI ADVISOR -->
   <section class="advisor reveal" id="advisor">
     <div class="advisor-inner">
       <div class="advisor-info">
@@ -1225,17 +333,12 @@
       <div class="advisor-chat">
         <div class="chat-header">
           <div class="chat-dot"></div>
-          <div>
-            <div class="chat-title">LayoffLens AI Advisor</div>
-            <div class="chat-sub">Powered by Anthropic Claude · Private & Anonymous</div>
-          </div>
+          <div><div class="chat-title">LayoffLens AI Advisor</div><div class="chat-sub">Powered by Anthropic Claude · Private & Anonymous</div></div>
         </div>
         <div class="chat-messages" id="chatMessages">
           <div class="msg msg-ai">Hi — I'm here to help. Whether you just got laid off, are worried about your job security, or want to future-proof your career, ask me anything. Everything here is completely private.</div>
         </div>
-        <div class="msg msg-typing" id="typingIndicator">
-          <div class="typing-dots"><span></span><span></span><span></span></div>
-        </div>
+        <div class="msg msg-typing" id="typingIndicator"><div class="typing-dots"><span></span><span></span><span></span></div></div>
         <div class="chat-input-wrap">
           <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter') sendMessage()"/>
           <button class="chat-send" onclick="sendMessage()">Send</button>
@@ -1244,38 +347,25 @@
     </div>
   </section>
 
-  <!-- JOB BOARD -->
   <section class="jobs-section reveal" id="jobs">
     <div class="section-label">Live Listings</div>
     <h2 class="section-title">Find Your<br/><em>Next Role</em></h2>
     <p class="section-sub" style="margin-bottom: 48px;">Real job listings updated live. Search by keyword, filter by country, and apply directly.</p>
-
     <div class="jobs-search-bar">
       <input type="text" id="job-keyword" placeholder="Job title or keyword... (e.g. software engineer)" value="software engineer"/>
       <select id="job-country">
-        <option value="us">🇺🇸 USA</option>
-        <option value="gb">🇬🇧 UK</option>
-        <option value="in">🇮🇳 India</option>
-        <option value="ca">🇨🇦 Canada</option>
-        <option value="au">🇦🇺 Australia</option>
-        <option value="de">🇩🇪 Germany</option>
+        <option value="us">🇺🇸 USA</option><option value="gb">🇬🇧 UK</option><option value="in">🇮🇳 India</option>
+        <option value="ca">🇨🇦 Canada</option><option value="au">🇦🇺 Australia</option><option value="de">🇩🇪 Germany</option>
       </select>
       <button class="btn-red" onclick="loadJobs(1)" style="padding: 12px 28px; font-size: 12px;">Search Jobs</button>
     </div>
-
     <div class="jobs-stats" id="jobs-stats"></div>
-
     <div class="jobs-grid" id="jobs-grid">
-      <div class="jobs-empty">
-        <div class="jobs-empty-icon">🔍</div>
-        <p>Click "Search Jobs" to load live listings</p>
-      </div>
+      <div class="jobs-empty"><div class="jobs-empty-icon">🔍</div><p>Click "Search Jobs" to load live listings</p></div>
     </div>
-
     <div class="jobs-pagination" id="jobs-pagination"></div>
   </section>
 
-  <!-- STORIES -->
   <section class="stories reveal" id="stories">
     <div class="stories-header">
       <div class="section-label">Anonymous Community</div>
@@ -1283,71 +373,25 @@
       <p class="section-sub">Thousands of people going through the same thing. You are not alone — and your story might help someone else.</p>
     </div>
     <div class="stories-grid" id="storiesGrid">
-      <div class="story-card">
-        <div class="story-meta">
-          <span class="story-tag">Tech</span>
-          <span class="story-date">Feb 2026</span>
-        </div>
-        <p>"I was employee #12 at the startup. We scaled to 200 people and I thought I was safe. Got the Slack message on a Tuesday morning. No warning. My access was revoked before I could even say goodbye to my team."</p>
-        <div class="story-anon">— Anonymous · Senior Engineer · USA</div>
-      </div>
-      <div class="story-card">
-        <div class="story-meta">
-          <span class="story-tag">Finance</span>
-          <span class="story-date">Jan 2026</span>
-        </div>
-        <p>"Three months after my promotion. I thought a promotion meant security. The day they laid off 15% of the team I was on the list. Now I realise — no one is safe. I'm using this time to finally learn Python and AI tools."</p>
-        <div class="story-anon">— Anonymous · Financial Analyst · UK</div>
-      </div>
-      <div class="story-card">
-        <div class="story-meta">
-          <span class="story-tag">Retail</span>
-          <span class="story-date">Mar 2026</span>
-        </div>
-        <p>"12 years at the same company. I thought loyalty mattered. It doesn't. What matters now is skills — I started learning AI tools and within 6 weeks had 3 interviews. Don't wait for the layoff to start learning."</p>
-        <div class="story-anon">— Anonymous · Operations Manager · India</div>
-      </div>
+      <div class="story-card"><div class="story-meta"><span class="story-tag">Tech</span><span class="story-date">Feb 2026</span></div><p>"I was employee #12 at the startup. We scaled to 200 people and I thought I was safe. Got the Slack message on a Tuesday morning. No warning. My access was revoked before I could even say goodbye to my team."</p><div class="story-anon">— Anonymous · Senior Engineer · USA</div></div>
+      <div class="story-card"><div class="story-meta"><span class="story-tag">Finance</span><span class="story-date">Jan 2026</span></div><p>"Three months after my promotion. I thought a promotion meant security. The day they laid off 15% of the team I was on the list. Now I realise — no one is safe. I'm using this time to finally learn Python and AI tools."</p><div class="story-anon">— Anonymous · Financial Analyst · UK</div></div>
+      <div class="story-card"><div class="story-meta"><span class="story-tag">Retail</span><span class="story-date">Mar 2026</span></div><p>"12 years at the same company. I thought loyalty mattered. It doesn't. What matters now is skills — I started learning AI tools and within 6 weeks had 3 interviews. Don't wait for the layoff to start learning."</p><div class="story-anon">— Anonymous · Operations Manager · India</div></div>
     </div>
-
     <div class="share-story">
       <h3>Share Your Story</h3>
       <p>Anonymous. No email required. Your story could help someone who is going through the same thing right now.</p>
       <div class="share-form">
-        <select id="storyIndustry">
-          <option value="" disabled selected>Your Industry</option>
-          <option>Tech</option>
-          <option>Finance</option>
-          <option>Retail</option>
-          <option>Healthcare</option>
-          <option>Manufacturing</option>
-          <option>Energy</option>
-          <option>Other</option>
-        </select>
-        <select id="storyCountry">
-          <option value="" disabled selected>Your Country</option>
-          <option>USA</option>
-          <option>UK</option>
-          <option>India</option>
-          <option>Ireland</option>
-          <option>Canada</option>
-          <option>Australia</option>
-          <option>Germany</option>
-          <option>Other</option>
-        </select>
+        <select id="storyIndustry"><option value="" disabled selected>Your Industry</option><option>Tech</option><option>Finance</option><option>Retail</option><option>Healthcare</option><option>Manufacturing</option><option>Energy</option><option>Other</option></select>
+        <select id="storyCountry"><option value="" disabled selected>Your Country</option><option>USA</option><option>UK</option><option>India</option><option>Ireland</option><option>Canada</option><option>Australia</option><option>Germany</option><option>Other</option></select>
         <textarea id="storyText" placeholder="Share your experience anonymously. What happened? What did you learn? What would you tell someone going through the same thing?" required></textarea>
-        <div class="full">
-          <button class="btn-red" onclick="submitStory()" style="width:100%;padding:16px;font-size:14px;">Share Anonymously →</button>
-        </div>
+        <div class="full"><button class="btn-red" onclick="submitStory()" style="width:100%;padding:16px;font-size:14px;">Share Anonymously →</button></div>
       </div>
     </div>
   </section>
 
-  <!-- BREATHE SECTION -->
   <div class="breathe-section">
     <div class="breathe-label">Take a moment</div>
-    <div class="breathe-circle">
-      <span class="breathe-text" id="breatheText">Breathe In</span>
-    </div>
+    <div class="breathe-circle"><span class="breathe-text" id="breatheText">Breathe In</span></div>
     <div class="breathe-instruction" id="breatheInstruction">Close your eyes. You are safe right now.</div>
     <div class="live-counter">
       <h3><span class="live-dot"></span><span id="liveCount">...</span></h3>
@@ -1355,7 +399,6 @@
     </div>
   </div>
 
-  <!-- SURVIVED -->
   <section class="survived reveal" id="survived">
     <div class="survived-header">
       <div class="section-label">You Are Not The First</div>
@@ -1363,145 +406,40 @@
       <p class="section-sub">Every person you look up to has been knocked down. What matters is what comes next.</p>
     </div>
     <div class="survived-grid">
-      <div class="survived-card">
-        <div class="survived-quote">I was fired from the company I built. It was devastating. But it freed me to enter one of the most creative periods of my life.</div>
-        <div class="survived-person">
-          <div class="survived-emoji">🍎</div>
-          <div>
-            <h4>Steve Jobs</h4>
-            <p>Fired from Apple · Founded Pixar · Returned to save Apple</p>
-          </div>
-        </div>
-      </div>
-      <div class="survived-card">
-        <div class="survived-quote">I was fired from my first television job for being "unfit for TV." That failure set me on the path to everything I have today.</div>
-        <div class="survived-person">
-          <div class="survived-emoji">📺</div>
-          <div>
-            <h4>Oprah Winfrey</h4>
-            <p>Fired as TV Reporter · Built a $2.5B empire</p>
-          </div>
-        </div>
-      </div>
-      <div class="survived-card">
-        <div class="survived-quote">I was laid off and had nothing. I used that time to write. Getting fired was the best thing that ever happened to my career.</div>
-        <div class="survived-person">
-          <div class="survived-emoji">✍️</div>
-          <div>
-            <h4>J.K. Rowling</h4>
-            <p>Unemployed single mother · Wrote Harry Potter</p>
-          </div>
-        </div>
-      </div>
-      <div class="survived-card">
-        <div class="survived-quote">Losing that job hurt my pride. But it gave me the push I needed to start something I actually believed in.</div>
-        <div class="survived-person">
-          <div class="survived-emoji">🎬</div>
-          <div>
-            <h4>Walt Disney</h4>
-            <p>Fired for "lack of imagination" · Built the world's biggest entertainment company</p>
-          </div>
-        </div>
-      </div>
-      <div class="survived-card">
-        <div class="survived-quote">Being let go felt like the end. I had a family to support. But I used every hour to learn new skills and within 3 months had a better job.</div>
-        <div class="survived-person">
-          <div class="survived-emoji">💪</div>
-          <div>
-            <h4>Anonymous</h4>
-            <p>Laid off 2024 · Re-employed within 90 days · LayoffLens Community</p>
-          </div>
-        </div>
-      </div>
-      <div class="survived-card">
-        <div class="survived-quote">I learned more Python and AI in the 2 months after my layoff than in 5 years of employment. The layoff was the reset I didn't know I needed.</div>
-        <div class="survived-person">
-          <div class="survived-emoji">🚀</div>
-          <div>
-            <h4>Anonymous</h4>
-            <p>Laid off from Tech · Now AI Developer · LayoffLens Community</p>
-          </div>
-        </div>
-      </div>
+      <div class="survived-card"><div class="survived-quote">I was fired from the company I built. It was devastating. But it freed me to enter one of the most creative periods of my life.</div><div class="survived-person"><div class="survived-emoji">🍎</div><div><h4>Steve Jobs</h4><p>Fired from Apple · Founded Pixar · Returned to save Apple</p></div></div></div>
+      <div class="survived-card"><div class="survived-quote">I was fired from my first television job for being "unfit for TV." That failure set me on the path to everything I have today.</div><div class="survived-person"><div class="survived-emoji">📺</div><div><h4>Oprah Winfrey</h4><p>Fired as TV Reporter · Built a $2.5B empire</p></div></div></div>
+      <div class="survived-card"><div class="survived-quote">I was laid off and had nothing. I used that time to write. Getting fired was the best thing that ever happened to my career.</div><div class="survived-person"><div class="survived-emoji">✍️</div><div><h4>J.K. Rowling</h4><p>Unemployed single mother · Wrote Harry Potter</p></div></div></div>
+      <div class="survived-card"><div class="survived-quote">Losing that job hurt my pride. But it gave me the push I needed to start something I actually believed in.</div><div class="survived-person"><div class="survived-emoji">🎬</div><div><h4>Walt Disney</h4><p>Fired for "lack of imagination" · Built the world's biggest entertainment company</p></div></div></div>
+      <div class="survived-card"><div class="survived-quote">Being let go felt like the end. I had a family to support. But I used every hour to learn new skills and within 3 months had a better job.</div><div class="survived-person"><div class="survived-emoji">💪</div><div><h4>Anonymous</h4><p>Laid off 2024 · Re-employed within 90 days · LayoffLens Community</p></div></div></div>
+      <div class="survived-card"><div class="survived-quote">I learned more Python and AI in the 2 months after my layoff than in 5 years of employment. The layoff was the reset I didn't know I needed.</div><div class="survived-person"><div class="survived-emoji">🚀</div><div><h4>Anonymous</h4><p>Laid off from Tech · Now AI Developer · LayoffLens Community</p></div></div></div>
     </div>
-
     <div class="daily-msg">
       <p id="dailyMessage">"This is not the end of your story. This is the plot twist that makes your story worth telling."</p>
       <span>— LayoffLens Daily Message</span>
     </div>
   </section>
 
-  <!-- RESOURCES -->
   <section class="resources reveal" id="resources">
     <div class="section-label">Free Resources</div>
     <h2 class="section-title">Everything You Need.<br/><em>All Free.</em></h2>
     <p class="section-sub">Carefully curated resources to help you rebuild — your career, your skills, and your confidence.</p>
     <div class="resources-grid">
-      <div class="resource-card">
-        <div class="resource-icon">🧠</div>
-        <h3>Learn AI Skills</h3>
-        <p>The skills that are replacing jobs are also the skills that create new ones. Start here.</p>
-        <div class="resource-links">
-          <a href="https://www.anthropic.com/learn" target="_blank" class="resource-link">Anthropic AI Courses</a>
-          <a href="https://www.coursera.org" target="_blank" class="resource-link">Coursera Free Courses</a>
-          <a href="https://www.kaggle.com/learn" target="_blank" class="resource-link">Kaggle Learn (Free)</a>
-          <a href="https://grow.google" target="_blank" class="resource-link">Google Career Certificates</a>
-        </div>
-      </div>
-      <div class="resource-card">
-        <div class="resource-icon">📄</div>
-        <h3>Job Search</h3>
-        <p>Where to look, how to apply, and how to stand out when hundreds are applying for the same role.</p>
-        <div class="resource-links">
-          <a href="https://linkedin.com/jobs" target="_blank" class="resource-link">LinkedIn Jobs</a>
-          <a href="https://www.ycombinator.com/jobs" target="_blank" class="resource-link">YC Startup Jobs</a>
-          <a href="https://remote.co" target="_blank" class="resource-link">Remote.co</a>
-          <a href="https://www.levels.fyi" target="_blank" class="resource-link">Levels.fyi Salaries</a>
-        </div>
-      </div>
-      <div class="resource-card">
-        <div class="resource-icon">💚</div>
-        <h3>Mental Health</h3>
-        <p>Losing a job is genuinely hard. Taking care of your mind is not optional — it's the foundation.</p>
-        <div class="resource-links">
-          <a href="https://www.headspace.com" target="_blank" class="resource-link">Headspace (Free Trial)</a>
-          <a href="https://www.7cups.com" target="_blank" class="resource-link">7 Cups (Free Therapy)</a>
-          <a href="https://www.reddit.com/r/layoffs" target="_blank" class="resource-link">r/layoffs Community</a>
-          <a href="https://www.betterhelp.com" target="_blank" class="resource-link">BetterHelp</a>
-        </div>
-      </div>
-      <div class="resource-card">
-        <div class="resource-icon">💰</div>
-        <h3>Financial Help</h3>
-        <p>Practical steps to stabilize your finances while you get back on your feet.</p>
-        <div class="resource-links">
-          <a href="https://www.nerdwallet.com" target="_blank" class="resource-link">NerdWallet Guides</a>
-          <a href="https://www.reddit.com/r/personalfinance" target="_blank" class="resource-link">r/personalfinance</a>
-          <a href="https://www.ynab.com" target="_blank" class="resource-link">YNAB Budgeting</a>
-          <a href="https://www.wisebread.com" target="_blank" class="resource-link">Wise Bread Tips</a>
-        </div>
-      </div>
+      <div class="resource-card"><div class="resource-icon">🧠</div><h3>Learn AI Skills</h3><p>The skills that are replacing jobs are also the skills that create new ones. Start here.</p><div class="resource-links"><a href="https://www.anthropic.com/learn" target="_blank" class="resource-link">Anthropic AI Courses</a><a href="https://www.coursera.org" target="_blank" class="resource-link">Coursera Free Courses</a><a href="https://www.kaggle.com/learn" target="_blank" class="resource-link">Kaggle Learn (Free)</a><a href="https://grow.google" target="_blank" class="resource-link">Google Career Certificates</a></div></div>
+      <div class="resource-card"><div class="resource-icon">📄</div><h3>Job Search</h3><p>Where to look, how to apply, and how to stand out when hundreds are applying for the same role.</p><div class="resource-links"><a href="https://linkedin.com/jobs" target="_blank" class="resource-link">LinkedIn Jobs</a><a href="https://www.ycombinator.com/jobs" target="_blank" class="resource-link">YC Startup Jobs</a><a href="https://remote.co" target="_blank" class="resource-link">Remote.co</a><a href="https://www.levels.fyi" target="_blank" class="resource-link">Levels.fyi Salaries</a></div></div>
+      <div class="resource-card"><div class="resource-icon">💚</div><h3>Mental Health</h3><p>Losing a job is genuinely hard. Taking care of your mind is not optional — it's the foundation.</p><div class="resource-links"><a href="https://www.headspace.com" target="_blank" class="resource-link">Headspace (Free Trial)</a><a href="https://www.7cups.com" target="_blank" class="resource-link">7 Cups (Free Therapy)</a><a href="https://www.reddit.com/r/layoffs" target="_blank" class="resource-link">r/layoffs Community</a><a href="https://www.betterhelp.com" target="_blank" class="resource-link">BetterHelp</a></div></div>
+      <div class="resource-card"><div class="resource-icon">💰</div><h3>Financial Help</h3><p>Practical steps to stabilize your finances while you get back on your feet.</p><div class="resource-links"><a href="https://www.nerdwallet.com" target="_blank" class="resource-link">NerdWallet Guides</a><a href="https://www.reddit.com/r/personalfinance" target="_blank" class="resource-link">r/personalfinance</a><a href="https://www.ynab.com" target="_blank" class="resource-link">YNAB Budgeting</a><a href="https://www.wisebread.com" target="_blank" class="resource-link">Wise Bread Tips</a></div></div>
     </div>
   </section>
 
-  <!-- FLOATING CHAT -->
   <button class="float-chat" onclick="document.getElementById('advisor').scrollIntoView({behavior:'smooth'})">
     <div class="float-chat-dot"></div>
     Talk to AI Advisor
   </button>
 
-  <!-- FOOTER -->
   <footer>
-    <div class="footer-left">
-      <h3>Layoff<span>Lens</span></h3>
-      <p>Built with empathy. For the people behind the numbers.</p>
-    </div>
+    <div class="footer-left"><h3>Layoff<span>Lens</span></h3><p>Built with empathy. For the people behind the numbers.</p></div>
     <nav>
-      <a href="#dashboard">Data</a>
-      <a href="#next">Warning Signs</a>
-      <a href="#advisor">AI Advisor</a>
-      <a href="#jobs">Job Board</a>
-      <a href="#stories">Stories</a>
+      <a href="#dashboard">Data</a><a href="#next">Warning Signs</a><a href="#advisor">AI Advisor</a><a href="#jobs">Job Board</a><a href="#stories">Stories</a>
     </nav>
   </footer>
 
@@ -1522,119 +460,58 @@
     }, { threshold: 0.05 });
     document.querySelectorAll('.reveal').forEach(el => {
       observer.observe(el);
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight) el.classList.add('visible');
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
     });
 
     // Wake up Render backend
-    setTimeout(() => {
-      fetch('https://layofflens.onrender.com/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'hi' })
-      }).catch(() => {});
-    }, 1000);
+    setTimeout(() => { fetch('https://layofflens.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'hi' }) }).catch(() => {}); }, 1000);
+
+    // LIVE NEWS TICKER
+    async function loadNewsTicker() {
+      try {
+        const res = await fetch('/api/news');
+        const data = await res.json();
+        if (data.news && data.news.length > 0) {
+          const track = document.getElementById('tickerTrack');
+          const items = data.news.map(item =>
+            `<span>${item.date ? item.date + ' — ' : ''}${item.title}</span><span class="sep"> ★ </span>`
+          ).join('');
+          track.innerHTML = items + items;
+        }
+      } catch (err) {}
+    }
+    loadNewsTicker();
 
     // CHARTS
     const chartDefaults = {
-      color: 'rgba(240,237,232,0.6)',
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: 'rgba(240,237,232,0.4)', font: { family: 'DM Mono', size: 11 } }, grid: { color: 'rgba(240,237,232,0.05)' } },
         y: { ticks: { color: 'rgba(240,237,232,0.4)', font: { family: 'DM Mono', size: 11 } }, grid: { color: 'rgba(240,237,232,0.05)' } }
       }
     };
+    new Chart(document.getElementById('industryChart'), { type: 'bar', data: { labels: ['Energy', 'Finance', 'Tech', 'FinTech', 'EdTech', 'Retail', 'Healthcare'], datasets: [{ data: [391285, 391075, 390703, 385037, 384424, 379848, 370210], backgroundColor: ['rgba(230,57,70,0.7)', 'rgba(230,57,70,0.6)', 'rgba(230,57,70,0.5)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.35)', 'rgba(230,57,70,0.3)', 'rgba(230,57,70,0.25)'], borderColor: 'rgba(230,57,70,0.8)', borderWidth: 1, borderRadius: 0 }] }, options: { ...chartDefaults, responsive: true } });
+    new Chart(document.getElementById('countryChart'), { type: 'doughnut', data: { labels: ['USA', 'India', 'UK', 'Germany', 'Canada', 'Others'], datasets: [{ data: [38, 18, 12, 9, 7, 16], backgroundColor: ['rgba(230,57,70,0.9)', 'rgba(230,57,70,0.7)', 'rgba(230,57,70,0.55)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.3)', 'rgba(240,237,232,0.1)'], borderColor: '#0f0f0f', borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { display: true, position: 'right', labels: { color: 'rgba(240,237,232,0.5)', font: { family: 'DM Mono', size: 11 }, boxWidth: 12, padding: 16 } } } } });
+    new Chart(document.getElementById('trendChart'), { type: 'line', data: { labels: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'], datasets: [{ data: [80000, 45000, 160000, 262000, 152000, 247000, 89000], borderColor: 'rgba(230,57,70,0.8)', backgroundColor: 'rgba(230,57,70,0.05)', borderWidth: 2, fill: true, tension: 0.4, pointBackgroundColor: 'rgba(230,57,70,1)', pointRadius: 4 }] }, options: { ...chartDefaults, responsive: true } });
 
-    new Chart(document.getElementById('industryChart'), {
-      type: 'bar',
-      data: {
-        labels: ['Energy', 'Finance', 'Tech', 'FinTech', 'EdTech', 'Retail', 'Healthcare'],
-        datasets: [{
-          data: [391285, 391075, 390703, 385037, 384424, 379848, 370210],
-          backgroundColor: ['rgba(230,57,70,0.7)', 'rgba(230,57,70,0.6)', 'rgba(230,57,70,0.5)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.35)', 'rgba(230,57,70,0.3)', 'rgba(230,57,70,0.25)'],
-          borderColor: 'rgba(230,57,70,0.8)',
-          borderWidth: 1,
-          borderRadius: 0,
-        }]
-      },
-      options: { ...chartDefaults, responsive: true }
-    });
-
-    new Chart(document.getElementById('countryChart'), {
-      type: 'doughnut',
-      data: {
-        labels: ['USA', 'India', 'UK', 'Germany', 'Canada', 'Others'],
-        datasets: [{
-          data: [38, 18, 12, 9, 7, 16],
-          backgroundColor: ['rgba(230,57,70,0.9)', 'rgba(230,57,70,0.7)', 'rgba(230,57,70,0.55)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.3)', 'rgba(240,237,232,0.1)'],
-          borderColor: '#0f0f0f',
-          borderWidth: 3,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            display: true,
-            position: 'right',
-            labels: { color: 'rgba(240,237,232,0.5)', font: { family: 'DM Mono', size: 11 }, boxWidth: 12, padding: 16 }
-          }
-        }
-      }
-    });
-
-    new Chart(document.getElementById('trendChart'), {
-      type: 'line',
-      data: {
-        labels: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'],
-        datasets: [{
-          data: [80000, 45000, 160000, 262000, 152000, 247000, 89000],
-          borderColor: 'rgba(230,57,70,0.8)',
-          backgroundColor: 'rgba(230,57,70,0.05)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: 'rgba(230,57,70,1)',
-          pointRadius: 4,
-        }]
-      },
-      options: { ...chartDefaults, responsive: true }
-    });
-
-    // FILTER
-    function filterData(type, btn) {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
+    function filterData(type, btn) { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
 
     // CHECKLIST
-    function toggleCheck(item) {
-      item.classList.toggle('checked');
-      updateScore();
-    }
+    function toggleCheck(item) { item.classList.toggle('checked'); updateScore(); }
     function updateScore() {
       const checked = document.querySelectorAll('.check-item.checked').length;
-      const total = 8;
-      const pct = (checked / total) * 100;
       document.getElementById('scoreNum').textContent = checked;
-      document.getElementById('scoreBar').style.width = pct + '%';
+      document.getElementById('scoreBar').style.width = (checked / 8 * 100) + '%';
       const advice = document.getElementById('scoreAdvice');
-      if (checked === 0) {
-        advice.textContent = 'Check the warning signs you\'re experiencing at your company to see your risk level.';
-      } else if (checked <= 2) {
-        advice.textContent = '🟢 Low risk. A couple of signs could be normal business changes. Stay alert but don\'t panic. Keep your LinkedIn updated just in case.';
-      } else if (checked <= 4) {
-        advice.textContent = '🟡 Moderate risk. Multiple signs are showing. Start quietly updating your CV, reach out to your network, and explore what\'s out there. Be prepared.';
-      } else if (checked <= 6) {
-        advice.textContent = '🔴 High risk. Several serious warning signs are present. Start applying for jobs now — don\'t wait for the announcement. Update your skills and have a plan ready.';
-      } else {
-        advice.textContent = '🚨 Very high risk. Almost all warning signs are present. Act now — update your CV today, tell trusted contacts you\'re exploring opportunities, and start applying immediately.';
-      }
+      if (checked === 0) advice.textContent = 'Check the warning signs you\'re experiencing at your company to see your risk level.';
+      else if (checked <= 2) advice.textContent = '🟢 Low risk. A couple of signs could be normal business changes. Stay alert but don\'t panic. Keep your LinkedIn updated just in case.';
+      else if (checked <= 4) advice.textContent = '🟡 Moderate risk. Multiple signs are showing. Start quietly updating your CV, reach out to your network, and explore what\'s out there. Be prepared.';
+      else if (checked <= 6) advice.textContent = '🔴 High risk. Several serious warning signs are present. Start applying for jobs now — don\'t wait for the announcement. Update your skills and have a plan ready.';
+      else advice.textContent = '🚨 Very high risk. Almost all warning signs are present. Act now — update your CV today, tell trusted contacts you\'re exploring opportunities, and start applying immediately.';
     }
 
     // AI CHAT
     const chatHistory = [];
-
     async function sendMessage() {
       const input = document.getElementById('chatInput');
       const msg = input.value.trim();
@@ -1644,28 +521,14 @@
       chatHistory.push({ role: 'user', content: msg });
       showTyping();
       try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: chatHistory })
-        });
+        const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: chatHistory }) });
         const data = await res.json();
         hideTyping();
         addMessage(data.response, 'ai');
         chatHistory.push({ role: 'assistant', content: data.response });
-      } catch (err) {
-        hideTyping();
-        chatHistory.pop();
-        addMessage('I\'m having trouble connecting right now. Please try again in a moment.', 'ai');
-      }
+      } catch (err) { hideTyping(); chatHistory.pop(); addMessage('I\'m having trouble connecting right now. Please try again in a moment.', 'ai'); }
     }
-
-    function askQuestion(q) {
-      document.getElementById('chatInput').value = q;
-      sendMessage();
-      document.getElementById('advisor').scrollIntoView({ behavior: 'smooth' });
-    }
-
+    function askQuestion(q) { document.getElementById('chatInput').value = q; sendMessage(); document.getElementById('advisor').scrollIntoView({ behavior: 'smooth' }); }
     function addMessage(text, type) {
       const msgs = document.getElementById('chatMessages');
       const div = document.createElement('div');
@@ -1674,17 +537,8 @@
       msgs.appendChild(div);
       msgs.scrollTop = msgs.scrollHeight;
     }
-
-    function showTyping() {
-      const t = document.getElementById('typingIndicator');
-      t.style.display = 'block';
-      document.getElementById('chatMessages').appendChild(t);
-      document.getElementById('chatMessages').scrollTop = 99999;
-    }
-
-    function hideTyping() {
-      document.getElementById('typingIndicator').style.display = 'none';
-    }
+    function showTyping() { const t = document.getElementById('typingIndicator'); t.style.display = 'block'; document.getElementById('chatMessages').appendChild(t); document.getElementById('chatMessages').scrollTop = 99999; }
+    function hideTyping() { document.getElementById('typingIndicator').style.display = 'none'; }
 
     // STORIES
     async function loadStories() {
@@ -1696,14 +550,7 @@
           data.stories.slice(0, 6).forEach(story => {
             const card = document.createElement('div');
             card.className = 'story-card';
-            card.innerHTML = `
-              <div class="story-meta">
-                <span class="story-tag">${story.industry}</span>
-                <span class="story-date">${story.date}</span>
-              </div>
-              <p>"${story.text}"</p>
-              <div class="story-anon">— Anonymous · ${story.country}</div>
-            `;
+            card.innerHTML = `<div class="story-meta"><span class="story-tag">${story.industry}</span><span class="story-date">${story.date}</span></div><p>"${story.text}"</p><div class="story-anon">— Anonymous · ${story.country}</div>`;
             grid.insertBefore(card, grid.firstChild);
           });
         }
@@ -1715,19 +562,11 @@
       const industry = document.getElementById('storyIndustry').value;
       const country = document.getElementById('storyCountry').value;
       const text = document.getElementById('storyText').value;
-      if (!text || text.trim().length < 20) {
-        alert('Please write a bit more — your story matters! 🙏');
-        return;
-      }
+      if (!text || text.trim().length < 20) { alert('Please write a bit more — your story matters! 🙏'); return; }
       const btn = document.querySelector('.share-form .btn-red');
-      btn.textContent = 'Sharing...';
-      btn.disabled = true;
+      btn.textContent = 'Sharing...'; btn.disabled = true;
       try {
-        const res = await fetch('/api/stories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ industry, country, text })
-        });
+        const res = await fetch('/api/stories', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ industry, country, text }) });
         const data = await res.json();
         if (data.success) {
           btn.textContent = '✓ Shared! Thank you 🙏';
@@ -1738,25 +577,10 @@
           const card = document.createElement('div');
           card.className = 'story-card';
           const date = new Date().toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
-          card.innerHTML = `
-            <div class="story-meta">
-              <span class="story-tag">${industry || 'Other'}</span>
-              <span class="story-date">${date}</span>
-            </div>
-            <p>"${text}"</p>
-            <div class="story-anon">— Anonymous · ${country || 'Anonymous'}</div>
-          `;
+          card.innerHTML = `<div class="story-meta"><span class="story-tag">${industry || 'Other'}</span><span class="story-date">${date}</span></div><p>"${text}"</p><div class="story-anon">— Anonymous · ${country || 'Anonymous'}</div>`;
           grid.insertBefore(card, grid.firstChild);
-        } else {
-          btn.textContent = 'Share Anonymously →';
-          btn.disabled = false;
-          alert('Something went wrong. Please try again!');
-        }
-      } catch (err) {
-        btn.textContent = 'Share Anonymously →';
-        btn.disabled = false;
-        alert('Something went wrong. Please try again!');
-      }
+        } else { btn.textContent = 'Share Anonymously →'; btn.disabled = false; alert('Something went wrong. Please try again!'); }
+      } catch (err) { btn.textContent = 'Share Anonymously →'; btn.disabled = false; alert('Something went wrong. Please try again!'); }
     }
 
     // JOB BOARD
@@ -1766,59 +590,26 @@
       const grid = document.getElementById('jobs-grid');
       const stats = document.getElementById('jobs-stats');
       const pagination = document.getElementById('jobs-pagination');
-
-      grid.innerHTML = `<div class="jobs-empty"><div class="jobs-empty-icon" style="animation: spin 1s linear infinite; display:inline-block;">⟳</div><p>Fetching live jobs...</p></div>`;
-      stats.innerHTML = '';
-      pagination.innerHTML = '';
-
+      grid.innerHTML = `<div class="jobs-empty"><div class="jobs-empty-icon">⟳</div><p>Fetching live jobs...</p></div>`;
+      stats.innerHTML = ''; pagination.innerHTML = '';
       try {
         const res = await fetch(`/api/jobs?keyword=${encodeURIComponent(keyword)}&country=${country}&page=${page}`);
         const data = await res.json();
-
-        if (!data.jobs || data.jobs.length === 0) {
-          grid.innerHTML = `<div class="jobs-empty"><div class="jobs-empty-icon">😕</div><p>No jobs found. Try a different keyword.</p></div>`;
-          return;
-        }
-
+        if (!data.jobs || data.jobs.length === 0) { grid.innerHTML = `<div class="jobs-empty"><div class="jobs-empty-icon">😕</div><p>No jobs found. Try a different keyword.</p></div>`; return; }
         stats.innerHTML = `Showing <strong>${data.jobs.length}</strong> of <strong>${data.total?.toLocaleString()}</strong> live listings for "<strong style="color:var(--white)">${keyword}</strong>"`;
-
-        grid.innerHTML = data.jobs.map(job => `
-          <div class="job-card">
-            <div class="job-card-top">
-              <div>
-                <div class="job-title">${job.title}</div>
-                <div class="job-company">${job.company}</div>
-              </div>
-              <span class="job-new-badge">New</span>
-            </div>
-            <div class="job-tags">
-              <span class="job-tag">📍 ${job.location}</span>
-              <span class="job-tag">💰 ${job.salary}</span>
-            </div>
-            <div class="job-desc">${job.description}</div>
-            <a href="${job.url}" target="_blank" rel="noopener" class="job-apply">Apply Now →</a>
-          </div>
-        `).join('');
-
+        grid.innerHTML = data.jobs.map(job => `<div class="job-card"><div class="job-card-top"><div><div class="job-title">${job.title}</div><div class="job-company">${job.company}</div></div><span class="job-new-badge">New</span></div><div class="job-tags"><span class="job-tag">📍 ${job.location}</span><span class="job-tag">💰 ${job.salary}</span></div><div class="job-desc">${job.description}</div><a href="${job.url}" target="_blank" rel="noopener" class="job-apply">Apply Now →</a></div>`).join('');
         const totalPages = Math.min(Math.ceil(data.total / 12), 10);
         if (totalPages > 1) {
           pagination.innerHTML = [
-            page > 1 ? `<button onclick="loadJobs(${page - 1})">← Prev</button>` : '',
+            page > 1 ? `<button onclick="loadJobs(${page-1})">← Prev</button>` : '',
             `<span>Page ${page} of ${totalPages}</span>`,
-            page < totalPages ? `<button onclick="loadJobs(${page + 1})">Next →</button>` : ''
+            page < totalPages ? `<button onclick="loadJobs(${page+1})">Next →</button>` : ''
           ].join('');
         }
-
         if (page > 1) document.getElementById('jobs').scrollIntoView({ behavior: 'smooth' });
-
-      } catch (err) {
-        grid.innerHTML = `<div class="jobs-empty" style="color:#E63946;"><div class="jobs-empty-icon">⚠️</div><p>Failed to load jobs. Please try again.</p></div>`;
-      }
+      } catch (err) { grid.innerHTML = `<div class="jobs-empty" style="color:#E63946;"><div class="jobs-empty-icon">⚠️</div><p>Failed to load jobs. Please try again.</p></div>`; }
     }
-
-    document.getElementById('job-keyword').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') loadJobs(1);
-    });
+    document.getElementById('job-keyword').addEventListener('keydown', e => { if (e.key === 'Enter') loadJobs(1); });
 
     // BREATHING
     const phases = [
@@ -1837,19 +628,17 @@
     }
     updateBreath();
 
-    // LIVE COUNTER
+    // LIVE VISITOR COUNTER
     async function updateVisitorCount() {
-  try {
-    const res = await fetch('/api/visitors');
-    const data = await res.json();
-    const el = document.getElementById('liveCount');
-    if (el) el.textContent = Math.max(1, data.count).toLocaleString();
-  } catch (err) {}
-}
-
-// Call immediately and every 30 seconds
-updateVisitorCount();
-setInterval(updateVisitorCount, 30000);
+      try {
+        const res = await fetch('/api/visitors');
+        const data = await res.json();
+        const el = document.getElementById('liveCount');
+        if (el) el.textContent = Math.max(1, data.count).toLocaleString();
+      } catch (err) {}
+    }
+    updateVisitorCount();
+    setInterval(updateVisitorCount, 30000);
 
     // DAILY MESSAGES
     const messages = [
@@ -1860,18 +649,12 @@ setInterval(updateVisitorCount, 30000);
       '"Rest if you need to. But don\'t quit."',
       '"What feels like the floor right now might just be the foundation of something better."',
     ];
-    const todayMsg = messages[new Date().getDay() % messages.length];
-    document.getElementById('dailyMessage').textContent = todayMsg;
+    document.getElementById('dailyMessage').textContent = messages[new Date().getDay() % messages.length];
 
     // COUNTER ANIMATION
     function animateCount(el, target) {
-      let current = 0;
-      const step = target / 60;
-      const timer = setInterval(() => {
-        current += step;
-        if (current >= target) { current = target; clearInterval(timer); }
-        el.textContent = Math.floor(current).toLocaleString();
-      }, 16);
+      let current = 0; const step = target / 60;
+      const timer = setInterval(() => { current += step; if (current >= target) { current = target; clearInterval(timer); } el.textContent = Math.floor(current).toLocaleString(); }, 16);
     }
     animateCount(document.getElementById('totalCount'), 247832);
   </script>
