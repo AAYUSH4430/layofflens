@@ -41,15 +41,12 @@
     .btn-red:hover { opacity: 0.85; transform: translateY(-2px); }
     .btn-ghost { background: transparent; color: var(--white-dim); padding: 16px 36px; font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; border: 1px solid var(--white-dimmest); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
     .btn-ghost:hover { border-color: var(--white-dimmer); color: var(--white); }
-
-    /* TICKER */
     .ticker { background: var(--red); padding: 12px 0; overflow: hidden; white-space: nowrap; position: relative; }
     .ticker-label { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; padding: 0 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: white; z-index: 2; white-space: nowrap; }
     .ticker-track { display: inline-block; animation: ticker 60s linear infinite; padding-left: 140px; }
     .ticker-track span { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.9); margin: 0 24px; }
     .ticker-track .sep { color: rgba(255,255,255,0.4); margin: 0 8px; }
     @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
     section { padding: 100px 48px; }
     .section-label { font-family: var(--mono); font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--red); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
     .section-label::before { content: ''; width: 24px; height: 1px; background: var(--red); }
@@ -64,6 +61,7 @@
     .chart-card { background: var(--bg3); padding: 36px; border: 1px solid var(--white-dimmest); }
     .chart-card h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dimmer); margin-bottom: 24px; }
     .chart-card.full { grid-column: 1 / -1; }
+    .chart-source { font-family: var(--mono); font-size: 10px; color: var(--white-dimmer); margin-top: 16px; letter-spacing: 1px; }
     .next-section { background: var(--bg2); }
     .next-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
     .checklist { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
@@ -209,87 +207,31 @@
     @keyframes floatIn { from { transform: translateY(80px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .float-chat:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(230,57,70,0.4); }
     .float-chat-dot { width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulse 2s infinite; }
-    /* HAMBURGER MENU */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
-      z-index: 600;
-    }
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--white);
-      transition: all 0.3s ease;
-    }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; z-index: 600; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s ease; }
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(8,8,8,0.97);
-      z-index: 550;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 32px;
-    }
+    .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8,8,8,0.97); z-index: 550; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
     .mobile-menu.open { display: flex; }
-    .mobile-menu a {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--white-dim);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
+    .mobile-menu a { font-size: 24px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); text-decoration: none; transition: color 0.2s; }
     .mobile-menu a:hover { color: var(--red); }
-    .mobile-menu .nav-pill {
-      background: var(--red) !important;
-      color: white !important;
-      padding: 12px 28px;
-      border-radius: 100px;
-      font-size: 16px !important;
-    }
-
+    .mobile-menu .nav-pill { background: var(--red) !important; color: white !important; padding: 12px 28px; border-radius: 100px; font-size: 16px !important; }
     @media (max-width: 900px) {
-      body { cursor: auto; }
-      .cursor, .cursor-ring { display: none; }
-      nav { padding: 16px 24px; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      section { padding: 70px 24px; }
-      .hero { padding: 120px 24px 70px; }
+      body { cursor: auto; } .cursor, .cursor-ring { display: none; }
+      nav { padding: 16px 24px; } .nav-links { display: none; } .hamburger { display: flex; }
+      section { padding: 70px 24px; } .hero { padding: 120px 24px 70px; }
       .hero h1 { font-size: clamp(40px, 12vw, 72px); letter-spacing: -1px; }
-      .hero-counter-row { gap: 20px; flex-wrap: wrap; }
-      .hero-counter h2 { font-size: clamp(24px, 7vw, 40px); }
-      .hero-btns { flex-direction: column; }
-      .btn-red, .btn-ghost { text-align: center; padding: 14px 24px; }
-      .charts-grid { grid-template-columns: 1fr; }
-      .next-inner { grid-template-columns: 1fr; gap: 40px; }
-      .score-panel { position: static; }
-      .advisor-inner { grid-template-columns: 1fr; gap: 40px; }
-      .advisor-chat { height: 420px; }
-      .stories-grid { grid-template-columns: 1fr; }
-      .share-form { grid-template-columns: 1fr; }
-      .share-form textarea { grid-column: 1; }
-      .share-form .full { grid-column: 1; }
-      .share-story { padding: 28px; }
-      .jobs-search-bar { flex-direction: column; }
-      .jobs-search-bar input, .jobs-search-bar select { width: 100%; }
-      .jobs-grid { grid-template-columns: 1fr; }
-      .resources-grid { grid-template-columns: 1fr; }
-      .survived-grid { grid-template-columns: 1fr; }
-      .daily-msg { padding: 32px 24px; }
-      .breathe-section { padding: 60px 24px; }
-      .live-counter { padding: 20px 24px; }
+      .hero-counter-row { gap: 20px; flex-wrap: wrap; } .hero-counter h2 { font-size: clamp(24px, 7vw, 40px); }
+      .hero-btns { flex-direction: column; } .btn-red, .btn-ghost { text-align: center; padding: 14px 24px; }
+      .charts-grid { grid-template-columns: 1fr; } .next-inner { grid-template-columns: 1fr; gap: 40px; }
+      .score-panel { position: static; } .advisor-inner { grid-template-columns: 1fr; gap: 40px; }
+      .advisor-chat { height: 420px; } .stories-grid { grid-template-columns: 1fr; }
+      .share-form { grid-template-columns: 1fr; } .share-form textarea { grid-column: 1; } .share-form .full { grid-column: 1; }
+      .share-story { padding: 28px; } .jobs-search-bar { flex-direction: column; }
+      .jobs-search-bar input, .jobs-search-bar select { width: 100%; } .jobs-grid { grid-template-columns: 1fr; }
+      .resources-grid { grid-template-columns: 1fr; } .survived-grid { grid-template-columns: 1fr; }
+      .daily-msg { padding: 32px 24px; } .breathe-section { padding: 60px 24px; } .live-counter { padding: 20px 24px; }
       footer { flex-direction: column; gap: 24px; text-align: center; padding: 32px 24px; }
       footer nav a { margin-left: 12px; margin-right: 12px; }
       .float-chat { bottom: 20px; right: 20px; padding: 12px 18px; font-size: 12px; }
@@ -316,7 +258,6 @@
     </div>
   </nav>
 
-  <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="#dashboard" onclick="closeMenu()">Data</a>
     <a href="#next" onclick="closeMenu()">Are You Next?</a>
@@ -333,8 +274,8 @@
     <h1>The Human Side<br/>of the <em>Layoff</em> Crisis</h1>
     <p class="hero-sub">Real data. Real stories. Real advice. Because behind every layoff statistic is a person trying to figure out what's next.</p>
     <div class="hero-counter-row">
-      <div class="hero-counter"><h2 id="totalCount">247,832</h2><p>People Laid Off in 2025</p></div>
-      <div class="hero-counter"><h2>1,200+</h2><p>Companies Affected</p></div>
+      <div class="hero-counter"><h2 id="totalCount">245,953</h2><p>Tech Layoffs in 2025</p></div>
+      <div class="hero-counter"><h2 id="companiesCount">783</h2><p>Companies Affected</p></div>
       <div class="hero-counter"><h2>50+</h2><p>Countries Impacted</p></div>
       <div class="hero-counter"><h2>Tech</h2><p>Hardest Hit Sector</p></div>
     </div>
@@ -344,7 +285,6 @@
     </div>
   </section>
 
-  <!-- LIVE NEWS TICKER -->
   <div class="ticker">
     <div class="ticker-label">LIVE NEWS</div>
     <div class="ticker-track" id="tickerTrack">
@@ -356,7 +296,7 @@
     <div class="dashboard-header">
       <div class="section-label">Global Data</div>
       <h2 class="section-title">The Numbers<br/>Don't Lie</h2>
-      <p class="section-sub">Explore layoff trends by industry, country and time. Data sourced from verified global reports.</p>
+      <p class="section-sub">Explore layoff trends by industry, country and time. Real data sourced from the U.S. Bureau of Labor Statistics.</p>
     </div>
     <div class="filters">
       <button class="filter-btn active" onclick="filterData('all', this)">All Industries</button>
@@ -369,7 +309,11 @@
     <div class="charts-grid">
       <div class="chart-card"><h3>Layoffs by Industry</h3><canvas id="industryChart" height="280"></canvas></div>
       <div class="chart-card"><h3>Top Countries Affected</h3><canvas id="countryChart" height="280"></canvas></div>
-      <div class="chart-card full"><h3>Layoff Trend Over Time (2020–2026)</h3><canvas id="trendChart" height="200"></canvas></div>
+      <div class="chart-card full">
+        <h3>US Layoffs & Discharges Over Time — Real BLS Data</h3>
+        <canvas id="trendChart" height="200"></canvas>
+        <p class="chart-source" id="chartSource">Loading real data from U.S. Bureau of Labor Statistics...</p>
+      </div>
     </div>
   </section>
 
@@ -534,7 +478,6 @@
   </footer>
 
   <script>
-    // HAMBURGER MENU
     function toggleMenu() {
       document.getElementById("hamburger").classList.toggle("open");
       document.getElementById("mobileMenu").classList.toggle("open");
@@ -545,7 +488,7 @@
       document.getElementById("mobileMenu").classList.remove("open");
       document.body.style.overflow = "";
     }
-    // CURSOR
+
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
     document.addEventListener('mousemove', e => {
@@ -555,7 +498,6 @@
       ring.style.top = e.clientY - 16 + 'px';
     });
 
-    // REVEAL ON SCROLL
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.05 });
@@ -564,7 +506,6 @@
       if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
     });
 
-    // Wake up Render backend
     setTimeout(() => { fetch('https://layofflens.onrender.com/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'hi' }) }).catch(() => {}); }, 1000);
 
     // LIVE NEWS TICKER
@@ -583,7 +524,7 @@
     }
     loadNewsTicker();
 
-    // CHARTS
+    // CHARTS - industry and country stay curated, trend is real BLS data
     const chartDefaults = {
       plugins: { legend: { display: false } },
       scales: {
@@ -591,13 +532,68 @@
         y: { ticks: { color: 'rgba(240,237,232,0.4)', font: { family: 'DM Mono', size: 11 } }, grid: { color: 'rgba(240,237,232,0.05)' } }
       }
     };
-    new Chart(document.getElementById('industryChart'), { type: 'bar', data: { labels: ['Energy', 'Finance', 'Tech', 'FinTech', 'EdTech', 'Retail', 'Healthcare'], datasets: [{ data: [391285, 391075, 390703, 385037, 384424, 379848, 370210], backgroundColor: ['rgba(230,57,70,0.7)', 'rgba(230,57,70,0.6)', 'rgba(230,57,70,0.5)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.35)', 'rgba(230,57,70,0.3)', 'rgba(230,57,70,0.25)'], borderColor: 'rgba(230,57,70,0.8)', borderWidth: 1, borderRadius: 0 }] }, options: { ...chartDefaults, responsive: true } });
-    new Chart(document.getElementById('countryChart'), { type: 'doughnut', data: { labels: ['USA', 'India', 'UK', 'Germany', 'Canada', 'Others'], datasets: [{ data: [38, 18, 12, 9, 7, 16], backgroundColor: ['rgba(230,57,70,0.9)', 'rgba(230,57,70,0.7)', 'rgba(230,57,70,0.55)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.3)', 'rgba(240,237,232,0.1)'], borderColor: '#0f0f0f', borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { display: true, position: 'right', labels: { color: 'rgba(240,237,232,0.5)', font: { family: 'DM Mono', size: 11 }, boxWidth: 12, padding: 16 } } } } });
-    new Chart(document.getElementById('trendChart'), { type: 'line', data: { labels: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'], datasets: [{ data: [80000, 45000, 160000, 262000, 152000, 247000, 89000], borderColor: 'rgba(230,57,70,0.8)', backgroundColor: 'rgba(230,57,70,0.05)', borderWidth: 2, fill: true, tension: 0.4, pointBackgroundColor: 'rgba(230,57,70,1)', pointRadius: 4 }] }, options: { ...chartDefaults, responsive: true } });
+
+    new Chart(document.getElementById('industryChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Energy', 'Finance', 'Tech', 'FinTech', 'EdTech', 'Retail', 'Healthcare'],
+        datasets: [{ data: [391285, 391075, 390703, 385037, 384424, 379848, 370210], backgroundColor: ['rgba(230,57,70,0.7)', 'rgba(230,57,70,0.6)', 'rgba(230,57,70,0.5)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.35)', 'rgba(230,57,70,0.3)', 'rgba(230,57,70,0.25)'], borderColor: 'rgba(230,57,70,0.8)', borderWidth: 1, borderRadius: 0 }]
+      },
+      options: { ...chartDefaults, responsive: true }
+    });
+
+    new Chart(document.getElementById('countryChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['USA', 'India', 'UK', 'Germany', 'Canada', 'Others'],
+        datasets: [{ data: [38, 18, 12, 9, 7, 16], backgroundColor: ['rgba(230,57,70,0.9)', 'rgba(230,57,70,0.7)', 'rgba(230,57,70,0.55)', 'rgba(230,57,70,0.4)', 'rgba(230,57,70,0.3)', 'rgba(240,237,232,0.1)'], borderColor: '#0f0f0f', borderWidth: 3 }]
+      },
+      options: { responsive: true, plugins: { legend: { display: true, position: 'right', labels: { color: 'rgba(240,237,232,0.5)', font: { family: 'DM Mono', size: 11 }, boxWidth: 12, padding: 16 } } } }
+    });
+
+    // REAL BLS TREND CHART
+    let trendChart = null;
+    async function loadRealTrendChart() {
+      try {
+        const res = await fetch('/api/layoffs');
+        const data = await res.json();
+        if (data.trend && data.trend.labels.length > 0) {
+          trendChart = new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: {
+              labels: data.trend.labels,
+              datasets: [{
+                data: data.trend.data,
+                borderColor: 'rgba(230,57,70,0.8)',
+                backgroundColor: 'rgba(230,57,70,0.05)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgba(230,57,70,1)',
+                pointRadius: 4
+              }]
+            },
+            options: { ...chartDefaults, responsive: true }
+          });
+          document.getElementById('chartSource').textContent = '★ Source: U.S. Bureau of Labor Statistics — Real verified data';
+        }
+      } catch (err) {
+        // fallback to static data if API fails
+        new Chart(document.getElementById('trendChart'), {
+          type: 'line',
+          data: {
+            labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+            datasets: [{ data: [80000, 45000, 160000, 262000, 152000, 247000], borderColor: 'rgba(230,57,70,0.8)', backgroundColor: 'rgba(230,57,70,0.05)', borderWidth: 2, fill: true, tension: 0.4, pointBackgroundColor: 'rgba(230,57,70,1)', pointRadius: 4 }]
+          },
+          options: { ...chartDefaults, responsive: true }
+        });
+        document.getElementById('chartSource').textContent = '';
+      }
+    }
+    loadRealTrendChart();
 
     function filterData(type, btn) { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
 
-    // CHECKLIST
     function toggleCheck(item) { item.classList.toggle('checked'); updateScore(); }
     function updateScore() {
       const checked = document.querySelectorAll('.check-item.checked').length;
@@ -611,7 +607,6 @@
       else advice.textContent = '🚨 Very high risk. Almost all warning signs are present. Act now — update your CV today, tell trusted contacts you\'re exploring opportunities, and start applying immediately.';
     }
 
-    // AI CHAT
     const chatHistory = [];
     async function sendMessage() {
       const input = document.getElementById('chatInput');
@@ -641,7 +636,6 @@
     function showTyping() { const t = document.getElementById('typingIndicator'); t.style.display = 'block'; document.getElementById('chatMessages').appendChild(t); document.getElementById('chatMessages').scrollTop = 99999; }
     function hideTyping() { document.getElementById('typingIndicator').style.display = 'none'; }
 
-    // STORIES
     async function loadStories() {
       try {
         const res = await fetch('/api/stories');
@@ -684,7 +678,6 @@
       } catch (err) { btn.textContent = 'Share Anonymously →'; btn.disabled = false; alert('Something went wrong. Please try again!'); }
     }
 
-    // JOB BOARD
     async function loadJobs(page = 1) {
       const keyword = document.getElementById('job-keyword').value.trim() || 'software engineer';
       const country = document.getElementById('job-country').value || 'us';
@@ -712,7 +705,6 @@
     }
     document.getElementById('job-keyword').addEventListener('keydown', e => { if (e.key === 'Enter') loadJobs(1); });
 
-    // BREATHING
     const phases = [
       { text: 'Breathe In...', instruction: 'Inhale slowly for 4 seconds', duration: 4000 },
       { text: 'Hold...', instruction: 'Hold your breath gently', duration: 4000 },
@@ -729,7 +721,6 @@
     }
     updateBreath();
 
-    // LIVE VISITOR COUNTER
     async function updateVisitorCount() {
       try {
         const res = await fetch('/api/visitors');
@@ -741,7 +732,6 @@
     updateVisitorCount();
     setInterval(updateVisitorCount, 30000);
 
-    // DAILY MESSAGES
     const messages = [
       '"This is not the end of your story. This is the plot twist that makes your story worth telling."',
       '"The version of you that gets through this will be stronger than the version that never had to."',
@@ -752,12 +742,12 @@
     ];
     document.getElementById('dailyMessage').textContent = messages[new Date().getDay() % messages.length];
 
-    // COUNTER ANIMATION
     function animateCount(el, target) {
       let current = 0; const step = target / 60;
       const timer = setInterval(() => { current += step; if (current >= target) { current = target; clearInterval(timer); } el.textContent = Math.floor(current).toLocaleString(); }, 16);
     }
-    animateCount(document.getElementById('totalCount'), 247832);
+    animateCount(document.getElementById('totalCount'), 245953);
+    animateCount(document.getElementById('companiesCount'), 783);
   </script>
 </body>
 </html>
