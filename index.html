@@ -1838,13 +1838,18 @@
     updateBreath();
 
     // LIVE COUNTER
-    let liveUsers = 2847;
-    setInterval(() => {
-      liveUsers += Math.floor(Math.random() * 5) - 2;
-      liveUsers = Math.max(2800, Math.min(3200, liveUsers));
-      const el = document.getElementById('liveCount');
-      if (el) el.textContent = liveUsers.toLocaleString();
-    }, 3000);
+    async function updateVisitorCount() {
+  try {
+    const res = await fetch('/api/visitors');
+    const data = await res.json();
+    const el = document.getElementById('liveCount');
+    if (el) el.textContent = Math.max(1, data.count).toLocaleString();
+  } catch (err) {}
+}
+
+// Call immediately and every 30 seconds
+updateVisitorCount();
+setInterval(updateVisitorCount, 30000);
 
     // DAILY MESSAGES
     const messages = [
